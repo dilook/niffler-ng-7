@@ -30,4 +30,20 @@ public class SpendingWebTest {
 
         new MainPage().checkThatTableContainsSpending(newDescription);
     }
+
+
+    @Spending(
+            username = "stas",
+            category = "еда",
+            description = "сладости",
+            amount = 100000
+    )
+    @Test
+    void spendingShouldBeDeletedFromTable(SpendJson spend) {
+        Selenide.open("http://frontend.niffler.dc", LoginPage.class)
+                .login("stas", "12345")
+                .deleteSpending(spend.description());
+
+        new MainPage().checkThatTableDoesntContainsSpending(spend.description());
+    }
 }
