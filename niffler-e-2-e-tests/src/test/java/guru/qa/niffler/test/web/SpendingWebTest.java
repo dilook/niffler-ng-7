@@ -1,7 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-//import guru.qa.niffler.config.Config;
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.Spending;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test;
 
 public class SpendingWebTest {
 
-//    private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
     @Spending(
-            username = "stas",
-            category = "Обучение",
+            username = "den",
+            category = "education",
             description = "Обучение Advanced 2.0",
             amount = 79990
     )
@@ -22,8 +22,8 @@ public class SpendingWebTest {
     void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
         final String newDescription = "Обучение Niffler Next Generation";
 
-        Selenide.open("http://frontend.niffler.dc", LoginPage.class)
-                .login("stas", "12345")
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login("den", "123")
                 .editSpending(spend.description())
                 .setDescription(newDescription)
                 .save();
@@ -33,15 +33,15 @@ public class SpendingWebTest {
 
 
     @Spending(
-            username = "stas",
-            category = "еда",
+            username = "den",
+            category = "food",
             description = "сладости",
             amount = 100000
     )
     @Test
     void spendingShouldBeDeletedFromTable(SpendJson spend) {
-        Selenide.open("http://frontend.niffler.dc", LoginPage.class)
-                .login("stas", "12345")
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login("den", "123")
                 .deleteSpending(spend.description());
 
         new MainPage().checkThatTableDoesntContainsSpending(spend.description());

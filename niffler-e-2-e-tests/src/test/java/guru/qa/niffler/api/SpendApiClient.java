@@ -1,13 +1,15 @@
 package guru.qa.niffler.api;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.SpendJson;
 import lombok.SneakyThrows;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class SpendApiClient {
+
     private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://127.0.0.1:8093/")
+            .baseUrl(Config.getInstance().spendUrl())
             .addConverterFactory(JacksonConverterFactory.create())
             .build();
 
