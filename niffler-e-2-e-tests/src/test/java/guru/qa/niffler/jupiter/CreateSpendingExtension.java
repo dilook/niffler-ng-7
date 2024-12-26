@@ -1,6 +1,6 @@
 package guru.qa.niffler.jupiter;
 
-import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.api.spend.SpendApiClient;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
@@ -17,7 +17,7 @@ public class CreateSpendingExtension implements BeforeEachCallback {
   private final SpendApiClient spendApiClient = new SpendApiClient();
 
   @Override
-  public void beforeEach(ExtensionContext context) throws Exception {
+  public void beforeEach(ExtensionContext context) {
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Spending.class)
         .ifPresent(anno -> {
           SpendJson spend = new SpendJson(
