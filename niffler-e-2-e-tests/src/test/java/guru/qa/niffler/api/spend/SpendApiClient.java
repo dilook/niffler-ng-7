@@ -51,7 +51,7 @@ public class SpendApiClient {
     }
 
     @SneakyThrows
-    public CategoryJson addCategory(CategoryJson categoryJson) {
+    public CategoryJson createCategory(CategoryJson categoryJson) {
         return spendApi.addCategory(categoryJson).execute().body();
     }
 
