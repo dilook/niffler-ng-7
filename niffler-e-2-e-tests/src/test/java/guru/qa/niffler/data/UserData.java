@@ -8,7 +8,7 @@ public class UserData {
 
     private static final Faker FAKER = new Faker();
 
-    public static User generateUser() {
+    public static User random() {
         return new User(FAKER.name().username(), FAKER.internet().password(3, 12));
     }
 }

@@ -21,7 +21,7 @@ public class LoginPage {
     return new MainPage();
   }
 
-  public RegisterPage createNewAccountBtnClick() {
+  public RegisterPage clickOnCreateNewAccountBtn() {
     createNewAccountButton.click();
     webdriver().shouldHave(urlContaining("/register"));
     return new RegisterPage();

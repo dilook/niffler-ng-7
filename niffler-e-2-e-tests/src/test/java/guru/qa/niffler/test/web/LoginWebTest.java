@@ -12,10 +12,10 @@ public class LoginWebTest {
 
     @Test
     public void mainPageShouldBeDisplayedAfterSuccessLogin() {
-        UserData.User randomUser = UserData.generateUser();
+        UserData.User randomUser = UserData.random();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .createNewAccountBtnClick()
+                .clickOnCreateNewAccountBtn()
                 .signUp(randomUser.name(), randomUser.password())
                 .signInClick()
                 .login(randomUser.name(), randomUser.password())
@@ -24,7 +24,7 @@ public class LoginWebTest {
 
     @Test
     public void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-        UserData.User randomUser = UserData.generateUser();
+        UserData.User randomUser = UserData.random();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(randomUser.name(), randomUser.password());

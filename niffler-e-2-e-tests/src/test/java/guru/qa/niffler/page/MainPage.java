@@ -5,7 +5,6 @@ import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
@@ -15,12 +14,6 @@ public class MainPage {
   private final SelenideElement profileBtn = $("button[aria-label='Menu']");
 
   MenuComponent menu = new MenuComponent();
-
-  class MenuComponent {
-    void selectMenuItem(String menuItem) {
-      $(byText(menuItem)).click();
-    }
-  }
 
   public EditSpendingPage editSpending(String spendingDescription) {
     tableRows.find(text(spendingDescription)).$$("td").get(5).click();

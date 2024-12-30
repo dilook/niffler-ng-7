@@ -14,10 +14,10 @@ public class RegisterWebTest {
 
     @Test
     public void shouldRegisterNewUser() {
-        UserData.User randomUser = UserData.generateUser();
+        UserData.User randomUser = UserData.random();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .createNewAccountBtnClick()
+                .clickOnCreateNewAccountBtn()
                 .setUsername(randomUser.name())
                 .setPassword(randomUser.password())
                 .setPasswordSubmit(randomUser.password())
@@ -28,13 +28,13 @@ public class RegisterWebTest {
 
     @Test
     public void shouldNotRegisterUserWithExistingUsername() {
-        UserData.User randomUser = UserData.generateUser();
+        UserData.User randomUser = UserData.random();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .createNewAccountBtnClick()
+                .clickOnCreateNewAccountBtn()
                 .signUp(randomUser.name(), randomUser.password());
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .createNewAccountBtnClick()
+                .clickOnCreateNewAccountBtn()
                 .signUp(randomUser.name(), randomUser.password())
                 .checkErrorMessage("Username `" + randomUser.name() + "` already exists");
     }
@@ -42,7 +42,7 @@ public class RegisterWebTest {
     @Test
     public void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .createNewAccountBtnClick()
+                .clickOnCreateNewAccountBtn()
                 .setUsername("static")
                 .setPassword("123")
                 .setPasswordSubmit("321")
@@ -54,7 +54,7 @@ public class RegisterWebTest {
     @ValueSource(strings = {"1", "1234567891012"})
     public void shouldShowErrorIfPasswordLessThan3Characters(String password) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .createNewAccountBtnClick()
+                .clickOnCreateNewAccountBtn()
                 .setUsername("static")
                 .setPassword(password)
                 .setPasswordSubmit(password)
