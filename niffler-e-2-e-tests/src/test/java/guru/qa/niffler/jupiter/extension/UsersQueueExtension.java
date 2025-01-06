@@ -14,8 +14,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -36,6 +39,7 @@ public class UsersQueueExtension implements
 
   static {
     EMPTY_USERS.add(new StaticUser("bee", "12345", true));
+    EMPTY_USERS.add(new StaticUser("shmel", "12345", true));
     NOT_EMPTY_USERS.add(new StaticUser("duck", "12345", false));
     NOT_EMPTY_USERS.add(new StaticUser("dima", "12345", false));
   }
@@ -50,42 +54,43 @@ public class UsersQueueExtension implements
   public void beforeTestExecution(ExtensionContext context) {
     Arrays.stream(context.getRequiredTestMethod().getParameters())
         .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class))
-        .findFirst()
-        .map(p -> p.getAnnotation(UserType.class))
-        .ifPresent(ut -> {
+        //.map(p -> p.getAnnotation(UserType.class))
+        .forEach(p -> {
           Optional<StaticUser> user = Optional.empty();
           StopWatch sw = StopWatch.createStarted();
           while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
-            user = ut.empty()
+            user = p.getAnnotation(UserType.class).empty()
                 ? Optional.ofNullable(EMPTY_USERS.poll())
                 : Optional.ofNullable(NOT_EMPTY_USERS.poll());
           }
-          Allure.getLifecycle().updateTestCase(testCase ->
-              testCase.setStart(new Date().getTime())
-          );
-          user.ifPresentOrElse(
-              u ->
-                  context.getStore(NAMESPACE).put(
-                      context.getUniqueId(),
-                      u
-                  ),
+          user.ifPresentOrElse(u ->
+                          ((Map<Parameter, StaticUser>) context.getStore(NAMESPACE).getOrComputeIfAbsent(
+                                  context.getUniqueId(),
+                                  key -> new HashMap<>()
+                          )).put(p, u),
               () -> {
                 throw new IllegalStateException("Can`t obtain user after 30s.");
               }
           );
         });
+      Allure.getLifecycle().updateTestCase(testCase ->
+              testCase.setStart(new Date().getTime())
+      );
   }
 
   @Override
   public void afterTestExecution(ExtensionContext context) {
-    StaticUser user = context.getStore(NAMESPACE).get(
+    Map<Parameter, StaticUser> map = context.getStore(NAMESPACE).get(
         context.getUniqueId(),
-        StaticUser.class
+        Map.class
     );
-    if (user.empty()) {
-      EMPTY_USERS.add(user);
-    } else {
-      NOT_EMPTY_USERS.add(user);
+
+    for (Map.Entry<Parameter, StaticUser> entry : map.entrySet()) {
+        if (entry.getKey().getAnnotation(UserType.class).empty()) {
+            EMPTY_USERS.add(entry.getValue());
+        } else {
+            NOT_EMPTY_USERS.add(entry.getValue());
+        }
     }
   }
 
@@ -97,6 +102,8 @@ public class UsersQueueExtension implements
 
   @Override
   public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), StaticUser.class);
+    return ((Map<Parameter, StaticUser>) extensionContext.getStore(NAMESPACE)
+            .get(extensionContext.getUniqueId(), Map.class))
+            .get(parameterContext.getParameter());
   }
 }
