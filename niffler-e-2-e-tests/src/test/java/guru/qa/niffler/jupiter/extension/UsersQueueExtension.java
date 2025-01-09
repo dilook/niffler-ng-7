@@ -31,37 +31,55 @@ public class UsersQueueExtension implements
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UsersQueueExtension.class);
 
-  public record StaticUser(String username, String password, boolean empty) {
+  public record StaticUser(
+          String username,
+          String password,
+          String friend,
+          String income,
+          String outcome) {
+
   }
 
   private static final Queue<StaticUser> EMPTY_USERS = new ConcurrentLinkedQueue<>();
-  private static final Queue<StaticUser> NOT_EMPTY_USERS = new ConcurrentLinkedQueue<>();
+  private static final Queue<StaticUser> WITH_FRIEND_USERS = new ConcurrentLinkedQueue<>();
+  private static final Queue<StaticUser> WITH_INCOME_REQUEST_USERS = new ConcurrentLinkedQueue<>();
+  private static final Queue<StaticUser> WITH_OUTCOME_REQUEST_USERS = new ConcurrentLinkedQueue<>();
 
   static {
-    EMPTY_USERS.add(new StaticUser("bee", "12345", true));
-    EMPTY_USERS.add(new StaticUser("shmel", "12345", true));
-    NOT_EMPTY_USERS.add(new StaticUser("duck", "12345", false));
-    NOT_EMPTY_USERS.add(new StaticUser("dima", "12345", false));
+    EMPTY_USERS.add(new StaticUser("bee", "12345", null, null, null));
+    WITH_FRIEND_USERS.add(new StaticUser("shmel", "12345", "duck", null, null));
+    WITH_INCOME_REQUEST_USERS.add(new StaticUser("duck", "12345", null, "dima", null));
+    WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("dima", "12345", null, null, "duck"));
+    WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("dona", "12345", null, null, "duck"));
   }
 
   @Target(ElementType.PARAMETER)
   @Retention(RetentionPolicy.RUNTIME)
   public @interface UserType {
-    boolean empty() default true;
+    Type value() default Type.EMPTY;
+
+    enum Type {
+        EMPTY,
+        WITH_FRIEND,
+        WITH_INCOME_REQUEST,
+        WITH_OUTCOME_REQUEST
+    }
   }
 
   @Override
   public void beforeTestExecution(ExtensionContext context) {
     Arrays.stream(context.getRequiredTestMethod().getParameters())
         .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class))
-        //.map(p -> p.getAnnotation(UserType.class))
         .forEach(p -> {
           Optional<StaticUser> user = Optional.empty();
           StopWatch sw = StopWatch.createStarted();
           while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
-            user = p.getAnnotation(UserType.class).empty()
-                ? Optional.ofNullable(EMPTY_USERS.poll())
-                : Optional.ofNullable(NOT_EMPTY_USERS.poll());
+              user = switch (p.getAnnotation(UserType.class).value()) {
+                  case EMPTY -> Optional.ofNullable(EMPTY_USERS.poll());
+                  case WITH_FRIEND -> Optional.ofNullable(WITH_FRIEND_USERS.poll());
+                  case WITH_INCOME_REQUEST -> Optional.ofNullable(WITH_INCOME_REQUEST_USERS.poll());
+                  case WITH_OUTCOME_REQUEST -> Optional.ofNullable(WITH_OUTCOME_REQUEST_USERS.poll());
+              };
           }
           user.ifPresentOrElse(u ->
                           ((Map<Parameter, StaticUser>) context.getStore(NAMESPACE).getOrComputeIfAbsent(
@@ -86,10 +104,11 @@ public class UsersQueueExtension implements
     );
 
     for (Map.Entry<Parameter, StaticUser> entry : map.entrySet()) {
-        if (entry.getKey().getAnnotation(UserType.class).empty()) {
-            EMPTY_USERS.add(entry.getValue());
-        } else {
-            NOT_EMPTY_USERS.add(entry.getValue());
+        switch (entry.getKey().getAnnotation(UserType.class).value()) {
+            case EMPTY -> EMPTY_USERS.add(entry.getValue());
+            case WITH_FRIEND -> WITH_FRIEND_USERS.add(entry.getValue());
+            case WITH_INCOME_REQUEST -> WITH_INCOME_REQUEST_USERS.add(entry.getValue());
+            case WITH_OUTCOME_REQUEST -> WITH_OUTCOME_REQUEST_USERS.add(entry.getValue());
         }
     }
   }
