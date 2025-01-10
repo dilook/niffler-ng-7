@@ -2,6 +2,7 @@ package guru.qa.niffler.jupiter.extension;
 
 import io.qameta.allure.Allure;
 import org.apache.commons.lang3.time.StopWatch;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -66,6 +67,7 @@ public class UsersQueueExtension implements
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void beforeTestExecution(ExtensionContext context) {
     Arrays.stream(context.getRequiredTestMethod().getParameters())
         .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class))
@@ -74,10 +76,10 @@ public class UsersQueueExtension implements
           StopWatch sw = StopWatch.createStarted();
           while (user.isEmpty() && sw.getTime(TimeUnit.SECONDS) < 30) {
               user = switch (p.getAnnotation(UserType.class).value()) {
-                  case EMPTY -> Optional.ofNullable(EMPTY_USERS.poll());
-                  case WITH_FRIEND -> Optional.ofNullable(WITH_FRIEND_USERS.poll());
-                  case WITH_INCOME_REQUEST -> Optional.ofNullable(WITH_INCOME_REQUEST_USERS.poll());
-                  case WITH_OUTCOME_REQUEST -> Optional.ofNullable(WITH_OUTCOME_REQUEST_USERS.poll());
+                  case EMPTY -> getUserFromQueue(EMPTY_USERS);
+                  case WITH_FRIEND -> getUserFromQueue(WITH_FRIEND_USERS);
+                  case WITH_INCOME_REQUEST -> getUserFromQueue(WITH_INCOME_REQUEST_USERS);
+                  case WITH_OUTCOME_REQUEST -> getUserFromQueue(WITH_OUTCOME_REQUEST_USERS);
               };
           }
           user.ifPresentOrElse(u ->
@@ -95,7 +97,13 @@ public class UsersQueueExtension implements
       );
   }
 
+  @NotNull
+  private static Optional<StaticUser> getUserFromQueue(Queue<StaticUser> user) {
+    return Optional.ofNullable(user.poll());
+  }
+
   @Override
+  @SuppressWarnings("unchecked")
   public void afterTestExecution(ExtensionContext context) {
     Map<Parameter, StaticUser> map = context.getStore(NAMESPACE).get(
         context.getUniqueId(),
@@ -119,6 +127,7 @@ public class UsersQueueExtension implements
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
     return ((Map<Parameter, StaticUser>) extensionContext.getStore(NAMESPACE)
             .get(extensionContext.getUniqueId(), Map.class))
