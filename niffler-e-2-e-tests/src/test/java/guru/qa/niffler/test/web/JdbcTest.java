@@ -5,6 +5,7 @@ import guru.qa.niffler.data.entity.userdata.UserdataUserEntity;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UserDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
@@ -44,7 +45,7 @@ public class JdbcTest {
     void xaTest() {
         UserDbClient userDbClient = new UserDbClient();
 
-        UserdataUserEntity user = userDbClient.createUser(
+        UserJson user = userDbClient.createUser(
                 new AuthUserEntity(
                         null,
                         "xattr1",

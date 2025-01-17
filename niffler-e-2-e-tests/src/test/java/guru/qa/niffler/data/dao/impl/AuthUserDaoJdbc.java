@@ -81,7 +81,14 @@ public class AuthUserDaoJdbc implements AuthUserDao {
 
 
     @Override
-    public void delete(AuthUserEntity user) {
-
+    public void delete(AuthUserEntity authUser) {
+        try (PreparedStatement ps = connection.prepareStatement(
+                "DELETE FROM \"user\" WHERE id = ?"
+        )) {
+            ps.setObject(1, authUser.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -9,6 +9,7 @@ import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.userdata.UserdataUserEntity;
+import guru.qa.niffler.model.UserJson;
 
 import java.util.Optional;
 
@@ -18,8 +19,9 @@ public class UserDbClient {
 
     private static final Config CFG = Config.getInstance();
 
-    public UserdataUserEntity createUser(AuthUserEntity authUserEntity, UserdataUserEntity userdataUserEntity) {
-        return (UserdataUserEntity) xaTransaction(new XaFunction<>(
+    @SuppressWarnings("unchecked")
+    public UserJson createUser(AuthUserEntity authUserEntity, UserdataUserEntity userdataUserEntity) {
+        return (UserJson) xaTransaction(new XaFunction<>(
                         connection -> {
                             Optional<AuthUserEntity> userEntity = new AuthUserDaoJdbc(connection).findByUsername(authUserEntity.getUsername());
                             AuthUserEntity result = userEntity.orElseGet(() -> new AuthUserDaoJdbc(connection).createUser(authUserEntity));
@@ -29,7 +31,7 @@ public class UserDbClient {
                         },
                         CFG.authJdbcUrl()),
                 new XaFunction<>(
-                        connection -> new UserDaoJdbc(connection).createUser(userdataUserEntity),
+                        connection -> UserJson.fromEntity(new UserDaoJdbc(connection).createUser(userdataUserEntity)),
                         CFG.userdataJdbcUrl()
                 )
         );

@@ -33,10 +33,10 @@ public class SpendDbClient {
         );
     }
 
-    public SpendJson findSpendById(UUID spendId) {
+    public Optional<SpendJson> findSpendById(UUID spendId) {
         return transaction(connection -> {
                     Optional<SpendEntity> spend = new SpendDaoJdbc(connection).findSpendById(spendId);
-                    return spend.map(SpendJson::fromEntity).orElse(null);
+                    return spend.map(SpendJson::fromEntity);
                 },
                 CFG.spendJdbcUrl()
         );
