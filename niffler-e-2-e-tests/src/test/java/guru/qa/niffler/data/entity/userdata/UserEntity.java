@@ -4,6 +4,7 @@ import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.UserJson;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -11,6 +12,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@ToString(exclude = {"photo", "photoSmall"})
 public class UserEntity implements Serializable {
   private UUID id;
   private String username;
