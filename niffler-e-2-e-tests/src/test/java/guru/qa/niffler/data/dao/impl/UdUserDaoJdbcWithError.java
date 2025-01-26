@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.tpl.Connections.holder;
 
-public class UdUserDaoJdbc implements UdUserDao {
+public class UdUserDaoJdbcWithError implements UdUserDao {
 
   private static final Config CFG = Config.getInstance();
 
@@ -24,7 +24,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
         "INSERT INTO \"user\" (username, currency) VALUES (?, ?)",
         PreparedStatement.RETURN_GENERATED_KEYS)) {
-      ps.setString(1, user.getUsername());
+      ps.setString(1, null); //специально null для проверки отката транзакций
       ps.setString(2, user.getCurrency().name());
       ps.executeUpdate();
       final UUID generatedUserId;
@@ -71,7 +71,7 @@ public class UdUserDaoJdbc implements UdUserDao {
   @Override
   public List<UserEntity> findByUsername(String username) {
     List<UserEntity> users = new ArrayList<>();
-    try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("SELECT * FROM \"user\" WHERE username = ? ")) {
+    try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement("SELECT * FROM \"user\" WHERE username = ? ")) {
       ps.setObject(1, username);
 
       ps.execute();
