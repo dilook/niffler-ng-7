@@ -7,6 +7,8 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,8 +21,8 @@ public class AuthUserDaoJdbc implements AuthUserDao {
   @Override
   public AuthUserEntity create(AuthUserEntity user) {
     try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO \"user\" (username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
-            "VALUES (?, ?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS)) {
+            "INSERT INTO \"user\" (username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS)) {
       ps.setString(1, user.getUsername());
       ps.setString(2, user.getPassword());
       ps.setBoolean(3, user.getEnabled());
@@ -67,6 +69,32 @@ public class AuthUserDaoJdbc implements AuthUserDao {
           return Optional.empty();
         }
       }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public List<AuthUserEntity> findByUsername(String username) {
+    List<AuthUserEntity> users = new ArrayList<>();
+    try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement("SELECT * FROM \"user\" WHERE username = ? ")) {
+      ps.setObject(1, username);
+
+      ps.execute();
+      ResultSet rs = ps.getResultSet();
+
+      while (rs.next()) {
+        AuthUserEntity result = new AuthUserEntity();
+        result.setId(rs.getObject("id", UUID.class));
+        result.setUsername(rs.getString("username"));
+        result.setPassword(rs.getString("password"));
+        result.setEnabled(rs.getBoolean("enabled"));
+        result.setAccountNonExpired(rs.getBoolean("account_non_expired"));
+        result.setAccountNonLocked(rs.getBoolean("account_non_locked"));
+        result.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+        users.add(result);
+      }
+      return users;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
