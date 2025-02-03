@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "friendship")
 @IdClass(FriendShipId.class)
+@ToString
 public class FriendshipEntity implements Serializable {
 
   @Id
