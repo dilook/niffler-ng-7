@@ -15,6 +15,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Entity
+@ToString(exclude = {"photo", "photoSmall"})
 @Table(name = "\"user\"")
 public class UserEntity implements Serializable {
   @Id

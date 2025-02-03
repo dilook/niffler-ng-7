@@ -1,14 +1,14 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.dao.UdUserDao;
-import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
+import guru.qa.niffler.data.repository.UdUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.UdUserRepositoryJdbc;
 import guru.qa.niffler.data.tpl.DataSources;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.UserJson;
@@ -26,7 +26,7 @@ public class UsersDbClient {
   private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
   private final AuthUserRepository authUserRepository = new AuthUserRepositoryJdbc();
-  private final UdUserDao udUserDao = new UdUserDaoSpringJdbc();
+  private final UdUserRepository udUserRepository = new UdUserRepositoryJdbc();
 
   private final TransactionTemplate txTemplate = new TransactionTemplate(
       new JdbcTransactionManager(
@@ -39,6 +39,8 @@ public class UsersDbClient {
       CFG.userdataJdbcUrl()
   );
 
+
+  @SuppressWarnings("unchecked")
   public UserJson createUser(UserJson user) {
     return xaTransactionTemplate.execute(() -> {
           AuthUserEntity authUser = new AuthUserEntity();
@@ -60,7 +62,7 @@ public class UsersDbClient {
       );
       authUserRepository.create(authUser);
           return UserJson.fromEntity(
-              udUserDao.create(UserEntity.fromJson(user)),
+              udUserRepository.create(UserEntity.fromJson(user)),
               null
           );
         }
