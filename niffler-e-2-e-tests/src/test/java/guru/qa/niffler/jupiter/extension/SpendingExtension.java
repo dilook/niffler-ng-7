@@ -21,7 +21,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
   private final SpendApiClient spendApiClient = new SpendApiClient();
 
   @Override
-  public void beforeEach(ExtensionContext context) throws Exception {
+  public void beforeEach(ExtensionContext context) {
     AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Spending.class)
         .ifPresent(anno -> {
           SpendJson spend = new SpendJson(
