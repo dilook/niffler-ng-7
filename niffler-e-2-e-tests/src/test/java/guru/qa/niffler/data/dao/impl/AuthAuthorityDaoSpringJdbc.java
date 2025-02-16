@@ -10,7 +10,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
@@ -63,19 +67,10 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     @Override
     public void remove(AuthorityEntity... authority) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
-        jdbcTemplate.batchUpdate(
-                "DELETE FROM authority WHERE id = ?",
-                new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setObject(1, authority[i]    .getId());
-                    }
-
-                    @Override
-                    public int getBatchSize() {
-                        return authority.length;
-                    }
-                }
+        jdbcTemplate.batchUpdate("DELETE FROM authority WHERE id = ?",
+                Arrays.stream(authority)
+                        .map(auth -> new Object[]{auth.getId()})
+                        .toList()
         );
     }
 }
