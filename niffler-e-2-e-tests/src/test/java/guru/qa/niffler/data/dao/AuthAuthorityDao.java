@@ -10,4 +10,8 @@ public interface AuthAuthorityDao {
 
   List<AuthorityEntity> findAll();
 
+  AuthorityEntity update(AuthorityEntity authority);
+
+  void remove(AuthorityEntity... authority);
+
 }
