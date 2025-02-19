@@ -67,4 +67,10 @@ public class SpendRepositoryJdbc implements SpendRepository {
     public void removeCategory(CategoryEntity category) {
         categoryDao.remove(category);
     }
+
+    @Override
+    public CategoryEntity updateCategory(CategoryEntity category) {
+        categoryDao.update(category);
+        return category;
+    }
 }

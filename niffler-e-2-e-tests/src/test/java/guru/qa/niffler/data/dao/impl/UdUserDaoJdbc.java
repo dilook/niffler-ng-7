@@ -53,7 +53,7 @@ public class UdUserDaoJdbc implements UdUserDao {
                         "surname = ?," +
                         "photo = ?," +
                         "photo_small = ?," +
-                        "full_name = ?" +
+                        "full_name = ? " +
                         "WHERE id = ?");
              PreparedStatement friendshipPs = holder(url).connection().prepareStatement(
                      "INSERT INTO friendship (requester_id, addressee_id, status) " +
@@ -67,6 +67,7 @@ public class UdUserDaoJdbc implements UdUserDao {
             ps.setBytes(4, user.getPhoto());
             ps.setBytes(5, user.getPhotoSmall());
             ps.setString(6, user.getFullname());
+            ps.setObject(7, user.getId());
             ps.executeUpdate();
 
             for (FriendshipEntity fe : user.getFriendshipRequests()) {

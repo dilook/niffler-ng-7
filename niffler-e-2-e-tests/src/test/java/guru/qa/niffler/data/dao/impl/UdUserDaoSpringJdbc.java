@@ -57,7 +57,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
                         "surname = ?, " +
                         "photo = ?, " +
                         "photo_small = ?, " +
-                        "full_name = ?" +
+                        "full_name = ? " +
                         "WHERE id = ?",
                 user.getCurrency().name(),
                 user.getFirstname(),

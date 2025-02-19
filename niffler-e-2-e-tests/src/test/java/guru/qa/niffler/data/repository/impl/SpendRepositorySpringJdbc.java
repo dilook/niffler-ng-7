@@ -58,6 +58,8 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
         return spendDao.findSpendByUsernameAndSpendDescription(username, description);
     }
 
+
+
     @Override
     public void remove(SpendEntity spend) {
         spendDao.remove(spend);
@@ -66,5 +68,11 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     @Override
     public void removeCategory(CategoryEntity category) {
         categoryDao.remove(category);
+    }
+
+    @Override
+    public CategoryEntity updateCategory(CategoryEntity category) {
+        categoryDao.update(category);
+        return category;
     }
 }
