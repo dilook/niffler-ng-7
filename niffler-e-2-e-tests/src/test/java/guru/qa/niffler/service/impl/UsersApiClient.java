@@ -6,6 +6,7 @@ import guru.qa.niffler.api.UserDataApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
+import guru.qa.niffler.utils.RandomDataUtils;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
@@ -15,7 +16,8 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UsersApiClient implements UsersClient {
 
@@ -41,16 +43,29 @@ public class UsersApiClient implements UsersClient {
 
     @Override
     public UserJson createUser(String username, String password) {
-        return null;
+        Response<UserJson> response;
+        try {
+            authApi.getRegisterPage().execute();
+            authApi.register(username,
+                    password,
+                    password,
+                    ThreadSafeCookieStore.INSTANCE.getCookieValue("XSRF-TOKEN")
+            ).execute();
+            response = userDataApi.getCurrentUser(username).execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(201, response.code());
+        return response.body();
     }
 
     @Override
     public void addIncomeInvitation(UserJson targetUser, int count) {
+        if (count < 1) {
+            return;
+        }
         for (int i = 0; i < count; i++) {
-            // Create a temporary user
-            UserJson tempUser = createUser("temp_" + UUID.randomUUID(), "12345");
-
-            // Send invitation from temp user to target user
+            UserJson tempUser = createUser(RandomDataUtils.randomUsername(), "12345");
             try {
                 Response<UserJson> response = userDataApi.sendInvitation(tempUser.username(), targetUser.username())
                         .execute();
@@ -65,15 +80,11 @@ public class UsersApiClient implements UsersClient {
 
     @Override
     public void addOutcomeInvitation(UserJson targetUser, int count) {
-        if (count <= 0) {
+        if (count < 1) {
             return;
         }
-
         for (int i = 0; i < count; i++) {
-            // Create a temporary user
-            UserJson tempUser = createUser("temp_" + UUID.randomUUID(), "12345");
-
-            // Send invitation from target user to temp user
+            UserJson tempUser = createUser(RandomDataUtils.randomUsername(), "12345");
             try {
                 Response<UserJson> response = userDataApi.sendInvitation(targetUser.username(), tempUser.username())
                         .execute();
@@ -88,23 +99,17 @@ public class UsersApiClient implements UsersClient {
 
     @Override
     public void addFriend(UserJson targetUser, int count) {
-        if (count <= 0) {
+        if (count < 1) {
             return;
         }
-
         for (int i = 0; i < count; i++) {
-            // Create a temporary user
-            UserJson tempUser = createUser("temp_" + UUID.randomUUID(), "12345");
-
-            // Send invitation from temp user to target user
+            UserJson tempUser = createUser(RandomDataUtils.randomUsername(), "12345");
             try {
                 Response<UserJson> response = userDataApi.sendInvitation(tempUser.username(), targetUser.username())
                         .execute();
                 if (response.code() != 200) {
                     throw new AssertionError("Failed to send invitation: " + response.code());
                 }
-
-                // Accept invitation
                 response = userDataApi.acceptInvitation(targetUser.username(), tempUser.username())
                         .execute();
                 if (response.code() != 200) {
