@@ -44,11 +44,16 @@ public class CategoryExtension implements
             final List<CategoryJson> createdCategories = new ArrayList<>();
 
             for (Category categoryAnno : userAnno.categories()) {
-              CategoryJson category = new CategoryJson(
-                  null,
-                  "".equals(categoryAnno.name()) ? randomCategoryName() : categoryAnno.name(),
-                  username,
-                  categoryAnno.archived()
+              String categoryName = "".equals(categoryAnno.name()) ? randomCategoryName() : categoryAnno.name();
+              CategoryJson existedCategory = spendClient.findCategoryByUsernameAndName(username, categoryName);
+
+              CategoryJson category = existedCategory != null
+                      ? existedCategory
+                      : new CategoryJson(
+                   null,
+                      categoryName,
+                      username,
+                      categoryAnno.archived()
               );
               createdCategories.add(
                   spendClient.createCategory(category)
