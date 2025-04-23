@@ -4,6 +4,7 @@ import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.ThreadSafeCookieStore;
 import guru.qa.niffler.api.UserDataApi;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
@@ -16,6 +17,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,20 +45,22 @@ public class UsersApiClient implements UsersClient {
 
     @Override
     public UserJson createUser(String username, String password) {
-        Response<UserJson> response;
+
         try {
             authApi.getRegisterPage().execute();
-            authApi.register(username,
+            Response<Void> regResponse = authApi.register(username,
                     password,
                     password,
                     ThreadSafeCookieStore.INSTANCE.getCookieValue("XSRF-TOKEN")
             ).execute();
-            response = userDataApi.getCurrentUser(username).execute();
+            assertEquals(201, regResponse.code());
+
+            Response<UserJson> response = userDataApi.getCurrentUser(username).execute();
+            assertEquals(200, response.code());
+            return Objects.requireNonNull(response.body()).addTestData(new TestData(password));
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        assertEquals(200, response.code());
-        return response.body();
     }
 
     @Override
@@ -69,9 +73,8 @@ public class UsersApiClient implements UsersClient {
             try {
                 Response<UserJson> response = userDataApi.sendInvitation(tempUser.username(), targetUser.username())
                         .execute();
-                if (response.code() != 200) {
-                    throw new AssertionError("Failed to send invitation: " + response.code());
-                }
+                assertEquals(200, response.code());
+                targetUser.testData().incomeInvitations().add(tempUser);
             } catch (IOException e) {
                 throw new AssertionError(e);
             }
@@ -88,9 +91,8 @@ public class UsersApiClient implements UsersClient {
             try {
                 Response<UserJson> response = userDataApi.sendInvitation(targetUser.username(), tempUser.username())
                         .execute();
-                if (response.code() != 200) {
-                    throw new AssertionError("Failed to send invitation: " + response.code());
-                }
+                assertEquals(200, response.code());
+                targetUser.testData().outcomeInvitations().add(tempUser);
             } catch (IOException e) {
                 throw new AssertionError(e);
             }
@@ -107,14 +109,11 @@ public class UsersApiClient implements UsersClient {
             try {
                 Response<UserJson> response = userDataApi.sendInvitation(tempUser.username(), targetUser.username())
                         .execute();
-                if (response.code() != 200) {
-                    throw new AssertionError("Failed to send invitation: " + response.code());
-                }
+                assertEquals(200, response.code());
                 response = userDataApi.acceptInvitation(targetUser.username(), tempUser.username())
                         .execute();
-                if (response.code() != 200) {
-                    throw new AssertionError("Failed to accept invitation: " + response.code());
-                }
+                assertEquals(200, response.code());
+                targetUser.testData().friends().add(response.body());
             } catch (IOException e) {
                 throw new AssertionError(e);
             }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserExtension implements BeforeEachCallback,
     ParameterResolver {
@@ -30,15 +31,13 @@ public class UserExtension implements BeforeEachCallback,
           if ("".equals(userAnno.username())) {
             final String username = RandomDataUtils.randomUsername();
             UserJson user = usersClient.createUser(username, defaultPassword);
+            usersClient.addFriend(user, userAnno.friends());
+            usersClient.addIncomeInvitation(user, userAnno.incomeInvitations());
+            usersClient.addOutcomeInvitation(user, userAnno.outcomeInvitations());
+
             context.getStore(NAMESPACE).put(
                 context.getUniqueId(),
-                user.addTestData(
-                    new TestData(
-                        defaultPassword,
-                        new ArrayList<>(),
-                        new ArrayList<>()
-                    )
-                )
+                user
             );
           }
         });
