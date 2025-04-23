@@ -10,8 +10,6 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 
-import java.util.Optional;
-
 
 public class SpendDbClient implements SpendClient {
 
