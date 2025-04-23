@@ -1,12 +1,17 @@
 package guru.qa.niffler.config;
 
 import com.codeborne.selenide.Configuration;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import java.util.Map;
 
 enum LocalConfig implements Config {
   INSTANCE;
 
   static {
     Configuration.timeout = 8000;
+    Configuration.browserCapabilities = new ChromeOptions()
+              .setExperimentalOption("prefs", Map.of("intl.accept_languages", "en-US,en"));
   }
 
   @Override

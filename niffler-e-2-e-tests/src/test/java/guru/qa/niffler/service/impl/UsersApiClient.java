@@ -37,7 +37,7 @@ public class UsersApiClient implements UsersClient {
             .create(UserDataApi.class);
     private final AuthApi authApi = new Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(Config.getInstance().userdataUrl())
+            .baseUrl(Config.getInstance().authUrl())
             .addConverterFactory(JacksonConverterFactory.create())
             .build().create(AuthApi.class);
 
@@ -55,7 +55,7 @@ public class UsersApiClient implements UsersClient {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        assertEquals(201, response.code());
+        assertEquals(200, response.code());
         return response.body();
     }
 
