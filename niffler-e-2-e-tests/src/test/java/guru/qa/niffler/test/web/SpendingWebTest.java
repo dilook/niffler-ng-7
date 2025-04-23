@@ -24,12 +24,12 @@ public class SpendingWebTest {
       )
   )
   @Test
-  void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
+  void categoryDescriptionShouldBeChangedFromTable(SpendJson[] spend) {
     final String newDescription = "Обучение Niffler Next Generation";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin("duck", "12345")
-        .editSpending(spend.description())
+        .editSpending(spend[0].description())
         .setNewSpendingDescription(newDescription)
         .save();
 

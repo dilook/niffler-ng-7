@@ -10,6 +10,8 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 
+import java.util.Optional;
+
 
 public class SpendDbClient implements SpendClient {
 
@@ -44,5 +46,14 @@ public class SpendDbClient implements SpendClient {
               return null;
             }
     );
+  }
+
+  @Override
+  public CategoryJson findCategoryByUsernameAndName(String username, String name) {
+      return xaTransactionTemplate.execute(() ->
+              spendRepository.findCategoryByUsernameAndCategoryName(username, name)
+                      .map(CategoryJson::fromEntity)
+                      .orElse(null)
+      );
   }
 }

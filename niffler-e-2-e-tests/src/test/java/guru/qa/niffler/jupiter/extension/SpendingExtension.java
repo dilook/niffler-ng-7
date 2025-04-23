@@ -42,9 +42,12 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
             final List<SpendJson> createdSpends = new ArrayList<>();
 
             for (Spending spendAnno : userAnno.spendings()) {
+              CategoryJson category = spendClient.findCategoryByUsernameAndName(username, spendAnno.category());
+
               SpendJson spend = new SpendJson(
                   null,
                   new Date(),
+                  category != null ? category :
                   new CategoryJson(
                       null,
                       spendAnno.category(),

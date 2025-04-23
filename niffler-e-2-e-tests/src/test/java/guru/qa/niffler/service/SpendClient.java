@@ -9,4 +9,6 @@ public interface SpendClient {
   CategoryJson createCategory(CategoryJson category);
 
   void deleteCategory(CategoryJson categoryJson);
+
+  CategoryJson findCategoryByUsernameAndName(String username, String name);
 }
