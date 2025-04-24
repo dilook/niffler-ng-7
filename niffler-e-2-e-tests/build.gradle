@@ -124,6 +124,7 @@ dependencies {
     testImplementation "io.qameta.allure:allure-grpc:${allureVersion}"
     // WEB
     testImplementation "com.codeborne:selenide:${selenideVersion}"
+    testImplementation "com.codeborne:selenide-clear-with-shortcut:${selenideVersion}"
     // Utils
     testImplementation("com.github.javafaker:javafaker:${fakerVersion}") {
         exclude group: 'org.yaml'

@@ -6,7 +6,7 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -42,9 +42,12 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
             final List<SpendJson> createdSpends = new ArrayList<>();
 
             for (Spending spendAnno : userAnno.spendings()) {
+              CategoryJson category = spendClient.findCategoryByUsernameAndName(username, spendAnno.category());
+
               SpendJson spend = new SpendJson(
                   null,
                   new Date(),
+                  category != null ? category :
                   new CategoryJson(
                       null,
                       spendAnno.category(),

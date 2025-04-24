@@ -1,15 +1,14 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.SpendRepository;
-import guru.qa.niffler.data.repository.impl.SpendRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.SpendRepositoryJdbc;
-import guru.qa.niffler.data.repository.impl.SpendRepositorySpringJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.SpendClient;
 
 
 public class SpendDbClient implements SpendClient {
@@ -36,5 +35,23 @@ public class SpendDbClient implements SpendClient {
             spendRepository.createCategory(CategoryEntity.fromJson(category))
         )
     );
+  }
+
+  @Override
+  public void deleteCategory(CategoryJson category) {
+    xaTransactionTemplate.execute(() -> {
+              spendRepository.removeCategory(CategoryEntity.fromJson(category));
+              return null;
+            }
+    );
+  }
+
+  @Override
+  public CategoryJson findCategoryByUsernameAndName(String username, String name) {
+      return xaTransactionTemplate.execute(() ->
+              spendRepository.findCategoryByUsernameAndCategoryName(username, name)
+                      .map(CategoryJson::fromEntity)
+                      .orElse(null)
+      );
   }
 }
