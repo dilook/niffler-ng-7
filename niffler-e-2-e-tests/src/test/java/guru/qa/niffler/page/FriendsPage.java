@@ -1,13 +1,10 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import org.openqa.selenium.Keys;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.*;
-import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
 public class FriendsPage {

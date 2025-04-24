@@ -47,7 +47,24 @@ public class UsersApiClient implements UsersClient {
 
     @Override
     public UserJson createUser(String username, String password) {
-        return usersDbClient.createUser(username, password).addTestData(new TestData(password));
+        try {
+            authApi.getRegisterPage().execute();
+            Response<Void> regResponse = authApi.register(username,
+                    password,
+                    password,
+                    ThreadSafeCookieStore.INSTANCE.getCookieValue("XSRF-TOKEN")
+            ).execute();
+            assertEquals(201, regResponse.code());
+
+            Response<UserJson> response = userDataApi.getCurrentUser(username).execute();
+            assertEquals(200, response.code());
+            return Objects.requireNonNull(response.body()).addTestData(new TestData(password));
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        // тесты падают при создании юзеров через апи, т.к. иногда ивент не успевает обработаться в кафке,
+        // поэтому предпочтительнее создание через БД
+        // return usersDbClient.createUser(username, password).addTestData(new TestData(password));
     }
 
     @Override
