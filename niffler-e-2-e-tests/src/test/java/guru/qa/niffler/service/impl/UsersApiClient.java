@@ -43,24 +43,11 @@ public class UsersApiClient implements UsersClient {
             .addConverterFactory(JacksonConverterFactory.create())
             .build().create(AuthApi.class);
 
+    private final UsersDbClient usersDbClient = new UsersDbClient();
+
     @Override
     public UserJson createUser(String username, String password) {
-
-        try {
-            authApi.getRegisterPage().execute();
-            Response<Void> regResponse = authApi.register(username,
-                    password,
-                    password,
-                    ThreadSafeCookieStore.INSTANCE.getCookieValue("XSRF-TOKEN")
-            ).execute();
-            assertEquals(201, regResponse.code());
-
-            Response<UserJson> response = userDataApi.getCurrentUser(username).execute();
-            assertEquals(200, response.code());
-            return Objects.requireNonNull(response.body()).addTestData(new TestData(password));
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
+        return usersDbClient.createUser(username, password).addTestData(new TestData(password));
     }
 
     @Override

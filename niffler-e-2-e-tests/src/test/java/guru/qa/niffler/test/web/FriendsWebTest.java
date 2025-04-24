@@ -13,14 +13,14 @@ public class FriendsWebTest {
 
   private static final Config CFG = Config.getInstance();
 
-  @User(friends = 1)
+  @User(friends = 11)
   @Test
   void friendShouldBePresentInFriendsTable(UserJson user) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
         .friendsPage()
-        .checkExistingFriends(user.testData().friends().getFirst().username());
+        .checkExistingFriends(user.testData().getFriendsNames());
   }
 
   @User
@@ -33,23 +33,23 @@ public class FriendsWebTest {
         .checkNoExistingFriends();
   }
 
-  @User(incomeInvitations = 1)
+  @User(incomeInvitations = 11)
   @Test
   void incomeInvitationBePresentInFriendsTable(UserJson user) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
         .friendsPage()
-        .checkExistingInvitations(user.testData().incomeInvitations().getFirst().username());
+        .checkExistingInvitations(user.testData().getIncomeInvitationsNames());
   }
 
-  @User(outcomeInvitations = 1)
+  @User(outcomeInvitations = 11)
   @Test
   void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
         .allPeoplesPage()
-        .checkInvitationSentToUser(user.testData().outcomeInvitations().getFirst().username());
+        .checkInvitationSentToUser(user.testData().getOutcomeInvitationsNames());
   }
 }
