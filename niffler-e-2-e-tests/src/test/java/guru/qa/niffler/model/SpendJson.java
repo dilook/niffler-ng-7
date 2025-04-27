@@ -9,7 +9,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Date;
 import java.util.UUID;
 
-@ParametersAreNonnullByDefault
 public record SpendJson(
     @JsonProperty("id")
     UUID id,
@@ -26,7 +25,7 @@ public record SpendJson(
     @JsonProperty("username")
     String username) {
 
-  public static @Nonnull SpendJson fromEntity(SpendEntity entity) {
+  public static @Nonnull SpendJson fromEntity(@Nonnull SpendEntity entity) {
     final CategoryEntity category = entity.getCategory();
     final String username = entity.getUsername();
 

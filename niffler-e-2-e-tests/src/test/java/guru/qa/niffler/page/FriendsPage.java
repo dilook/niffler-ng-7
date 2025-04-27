@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Search;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,7 +18,7 @@ public class FriendsPage {
     private final SelenideElement requestsTable = $("#requests");
     private final SelenideElement friendsTable = $("#friends");
 
-    private final SearchComponent search = new SearchComponent();
+    private final Search search = new Search();
 
     @Nonnull
     public FriendsPage checkExistingFriends(String... expectedUsernames) {

@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Search;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -18,7 +19,7 @@ public class MainPage {
   private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
   private final SelenideElement statComponent = $("#stat");
   private final SelenideElement spendingTable = $("#spendings");
-  private final SearchComponent search = new SearchComponent();
+  private final Search search = new Search();
 
   @Nonnull
   public FriendsPage friendsPage() {

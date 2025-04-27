@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Search;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -14,7 +15,7 @@ public class PeoplePage {
     private final SelenideElement peopleTab = $("a[href='/people/friends']");
     private final SelenideElement allTab = $("a[href='/people/all']");
     private final SelenideElement peopleTable = $("#all");
-    private final SearchComponent search = new SearchComponent();
+    private final Search search = new Search();
 
     @Nonnull
     public PeoplePage checkInvitationSentToUser(String[] usernames) {

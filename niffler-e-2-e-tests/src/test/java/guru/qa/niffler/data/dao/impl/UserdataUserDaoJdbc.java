@@ -112,7 +112,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
       ResultSet rs = ps.getResultSet();
 
       if (rs.next()) {
-        return Optional.ofNullable(
+        return Optional.of(
             UserdataUserEntityRowMapper.instance.mapRow(rs, rs.getRow())
         );
       } else {
@@ -138,7 +138,7 @@ public class UserdataUserDaoJdbc implements UserdataUserDao {
       ResultSet rs = ps.getResultSet();
 
       if (rs.next()) {
-        return Optional.ofNullable(
+        return Optional.of(
             UserdataUserEntityRowMapper.instance.mapRow(rs, rs.getRow())
         );
       } else {
