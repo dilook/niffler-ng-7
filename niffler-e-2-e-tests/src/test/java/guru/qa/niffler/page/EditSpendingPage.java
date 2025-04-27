@@ -14,7 +14,7 @@ public class EditSpendingPage {
   private final SelenideElement descriptionInput = $("#description");
   private final SelenideElement saveBtn = $("#save");
 
-  private final Calendar calendar = new Calendar($(".SpendingCalendar"));
+  private final Calendar calendar = new Calendar($("[name='date']"));
 
   @Nonnull
   public EditSpendingPage setNewSpendingDescription(String description) {
