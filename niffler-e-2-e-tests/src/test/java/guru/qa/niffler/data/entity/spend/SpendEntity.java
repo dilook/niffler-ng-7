@@ -1,7 +1,7 @@
 package guru.qa.niffler.data.entity.spend;
 
 import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -53,6 +53,13 @@ public class SpendEntity implements Serializable {
   @OneToOne(fetch = FetchType.EAGER, cascade = PERSIST)
   @JoinColumn(name = "category_id", referencedColumnName = "id")
   private CategoryEntity category;
+
+  public SpendEntity(UUID id) {
+    this.id = id;
+  }
+
+  public SpendEntity() {
+  }
 
   public static SpendEntity fromJson(SpendJson json) {
     SpendEntity se = new SpendEntity();

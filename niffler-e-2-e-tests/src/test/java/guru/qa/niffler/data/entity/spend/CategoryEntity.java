@@ -1,6 +1,6 @@
 package guru.qa.niffler.data.entity.spend;
 
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.rest.CategoryJson;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +33,13 @@ public class CategoryEntity implements Serializable {
 
   @Column(nullable = false)
   private boolean archived;
+
+  public CategoryEntity(UUID id) {
+    this.id = id;
+  }
+
+  public CategoryEntity() {
+  }
 
   public static CategoryEntity fromJson(CategoryJson json) {
     CategoryEntity ce = new CategoryEntity();
