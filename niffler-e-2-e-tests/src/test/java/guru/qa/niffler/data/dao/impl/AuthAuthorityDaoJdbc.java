@@ -55,4 +55,37 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
       throw new RuntimeException(e);
     }
   }
+
+  @Override
+  public AuthorityEntity update(AuthorityEntity authority) {
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
+            "UPDATE authority SET " +
+                    "user_id = ?, " +
+                    "authority = ?" +
+                    "WHERE id = ?")) {
+      ps.setObject(1, authority.getUser().getId());
+      ps.setString(2, authority.getAuthority().name());
+      ps.setObject(3, authority.getId());
+
+      ps.executeBatch();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return authority;
+  }
+
+  @Override
+  public void remove(AuthorityEntity... authority) {
+    try (PreparedStatement ps = holder(url).connection().prepareStatement(
+            "DELETE FROM \"authority\" WHERE id = ?")) {
+      for (AuthorityEntity a : authority) {
+        ps.setObject(1, a.getUser().getId());
+        ps.addBatch();
+        ps.clearParameters();
+      }
+      ps.executeBatch();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }
