@@ -4,6 +4,7 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
@@ -14,8 +15,7 @@ public interface SpendClient {
   @Nonnull
   CategoryJson createCategory(CategoryJson category);
 
-  void deleteCategory(CategoryJson categoryJson);
-
+  @Nullable
   CategoryJson findCategoryByUsernameAndName(String username, String name);
 
   void removeCategory(CategoryJson category);

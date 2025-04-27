@@ -14,6 +14,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -21,6 +23,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class UsersApiClient implements UsersClient {
 
     OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -46,6 +49,7 @@ public class UsersApiClient implements UsersClient {
     private final UsersDbClient usersDbClient = new UsersDbClient();
 
     @Override
+    @Nonnull
     public UserJson createUser(String username, String password) {
         try {
             authApi.getRegisterPage().execute();

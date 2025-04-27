@@ -5,6 +5,8 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.SpendClient;
+import org.jetbrains.annotations.NotNull;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -17,10 +19,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendApiClient {
+public class SpendApiClient implements SpendClient {
 
   private final Retrofit retrofit = new Retrofit.Builder()
       .baseUrl(Config.getInstance().spendUrl())
@@ -29,7 +32,7 @@ public class SpendApiClient {
 
   private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-  @Nullable
+  @NotNull
   public SpendJson createSpend(SpendJson spend) {
     final Response<SpendJson> response;
     try {
@@ -39,7 +42,7 @@ public class SpendApiClient {
       throw new AssertionError(e);
     }
     assertEquals(201, response.code());
-    return response.body();
+    return requireNonNull(response.body());
   }
 
   @Nullable
@@ -97,7 +100,7 @@ public class SpendApiClient {
     assertEquals(200, response.code());
   }
 
-  @Nullable
+  @Nonnull
   public CategoryJson createCategory(CategoryJson category) {
     final Response<CategoryJson> response;
     try {
@@ -107,7 +110,18 @@ public class SpendApiClient {
       throw new AssertionError(e);
     }
     assertEquals(200, response.code());
-    return response.body();
+    return requireNonNull(response.body());
+  }
+
+  @Override
+  @Nonnull
+  public CategoryJson findCategoryByUsernameAndName(String username, String name) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void removeCategory(CategoryJson category) {
+    throw new UnsupportedOperationException();
   }
 
   @Nullable
