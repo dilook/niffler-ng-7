@@ -38,12 +38,12 @@ public class ProfileTest {
       )
   )
   @Test
-  void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
+  void activeCategoryShouldPresentInCategoriesList(CategoryJson[] category) {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin("duck", "12345")
         .checkThatPageLoaded();
 
     Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
-        .checkCategoryExists(category.name());
+        .checkCategoryExists(category[0].name());
   }
 }

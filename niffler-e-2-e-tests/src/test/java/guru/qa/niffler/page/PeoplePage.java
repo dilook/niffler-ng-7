@@ -11,14 +11,18 @@ import static com.codeborne.selenide.Selenide.$;
 @ParametersAreNonnullByDefault
 public class PeoplePage {
 
-  private final SelenideElement peopleTab = $("a[href='/people/friends']");
-  private final SelenideElement allTab = $("a[href='/people/all']");
-  private final SelenideElement peopleTable = $("#all");
+    private final SelenideElement peopleTab = $("a[href='/people/friends']");
+    private final SelenideElement allTab = $("a[href='/people/all']");
+    private final SelenideElement peopleTable = $("#all");
+    private final SearchComponent search = new SearchComponent();
 
-  @Nonnull
-  public PeoplePage checkInvitationSentToUser(String username) {
-    SelenideElement friendRow = peopleTable.$$("tr").find(text(username));
-    friendRow.shouldHave(text("Waiting..."));
-    return this;
-  }
+    @Nonnull
+    public PeoplePage checkInvitationSentToUser(String[] usernames) {
+        for (String username : usernames) {
+            search.find(username);
+            SelenideElement friendRow = peopleTable.$$("tr").find(text(username));
+            friendRow.shouldHave(text("Waiting..."));
+        }
+        return this;
+    }
 }

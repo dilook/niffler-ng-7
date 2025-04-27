@@ -18,6 +18,7 @@ public class MainPage {
   private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
   private final SelenideElement statComponent = $("#stat");
   private final SelenideElement spendingTable = $("#spendings");
+  private final SearchComponent search = new SearchComponent();
 
   @Nonnull
   public FriendsPage friendsPage() {
@@ -35,11 +36,13 @@ public class MainPage {
 
   @Nonnull
   public EditSpendingPage editSpending(String spendingDescription) {
+    search.find(spendingDescription);
     tableRows.find(text(spendingDescription)).$$("td").get(5).click();
     return new EditSpendingPage();
   }
 
   public void checkThatTableContainsSpending(String spendingDescription) {
+    search.find(spendingDescription);
     tableRows.find(text(spendingDescription)).should(visible);
   }
 

@@ -1,4 +1,4 @@
-package guru.qa.niffler.service;
+package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
@@ -8,6 +8,7 @@ import guru.qa.niffler.data.repository.impl.SpendRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.SpendClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -63,5 +64,23 @@ public class SpendDbClient implements SpendClient {
           return null;
         }
     );
+  }
+
+  @Override
+  public void deleteCategory(CategoryJson category) {
+    xaTransactionTemplate.execute(() -> {
+              spendRepository.removeCategory(CategoryEntity.fromJson(category));
+              return null;
+            }
+    );
+  }
+
+  @Override
+  public CategoryJson findCategoryByUsernameAndName(String username, String name) {
+      return xaTransactionTemplate.execute(() ->
+              spendRepository.findCategoryByUsernameAndCategoryName(username, name)
+                      .map(CategoryJson::fromEntity)
+                      .orElse(null)
+      );
   }
 }

@@ -5,9 +5,8 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendClient;
-import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.impl.SpendDbClient;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -45,11 +44,16 @@ public class CategoryExtension implements
             final List<CategoryJson> createdCategories = new ArrayList<>();
 
             for (Category categoryAnno : userAnno.categories()) {
-              CategoryJson category = new CategoryJson(
-                  null,
-                  "".equals(categoryAnno.name()) ? randomCategoryName() : categoryAnno.name(),
-                  username,
-                  categoryAnno.archived()
+              String categoryName = "".equals(categoryAnno.name()) ? randomCategoryName() : categoryAnno.name();
+              CategoryJson existedCategory = spendClient.findCategoryByUsernameAndName(username, categoryName);
+
+              CategoryJson category = existedCategory != null
+                      ? existedCategory
+                      : new CategoryJson(
+                   null,
+                      categoryName,
+                      username,
+                      categoryAnno.archived()
               );
               createdCategories.add(
                   spendClient.createCategory(category)
