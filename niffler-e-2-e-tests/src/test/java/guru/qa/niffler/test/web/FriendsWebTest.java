@@ -19,7 +19,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .friendsPage()
+        .getHeader()
+        .toFriendsPage()
         .checkExistingFriends(user.testData().getFriendsNames());
   }
 
@@ -29,7 +30,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .friendsPage()
+        .getHeader()
+        .toFriendsPage()
         .checkNoExistingFriends();
   }
 
@@ -39,7 +41,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .friendsPage()
+        .getHeader()
+        .toFriendsPage()
         .checkExistingInvitations(user.testData().getIncomeInvitationsNames());
   }
 
@@ -49,7 +52,8 @@ public class FriendsWebTest {
     Selenide.open(CFG.frontUrl(), LoginPage.class)
         .successLogin(user.username(), user.testData().password())
         .checkThatPageLoaded()
-        .allPeoplesPage()
+        .getHeader()
+        .toPeoplePage()
         .checkInvitationSentToUser(user.testData().getOutcomeInvitationsNames());
   }
 }

@@ -1,7 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.page.component.Search;
+import guru.qa.niffler.page.component.SearchField;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -18,14 +18,14 @@ public class FriendsPage {
     private final SelenideElement requestsTable = $("#requests");
     private final SelenideElement friendsTable = $("#friends");
 
-    private final Search search = new Search();
+    private final SearchField searchField = new SearchField();
 
     @Nonnull
     public FriendsPage checkExistingFriends(String... expectedUsernames) {
         List<String> usernameOnFirstPage = friendsTable.$$("tr td").shouldHave(sizeGreaterThan(0)).texts();
         for (String username : expectedUsernames) {
             if (!usernameOnFirstPage.contains(username)) {
-                search.find(username);
+                searchField.search(username);
                 friendsTable.$$("tr").should(texts(username));
             }
         }
@@ -43,7 +43,7 @@ public class FriendsPage {
         List<String> usernameOnFirstPage = requestsTable.$$("tr td").shouldHave(sizeGreaterThan(0)).texts();
         for (String username : expectedUsernames) {
             if (!usernameOnFirstPage.contains(username)) {
-                search.find(username);
+                searchField.search(username);
                 requestsTable.$$("tr").should(texts(username));
             }
         }
