@@ -8,6 +8,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 import static com.codeborne.selenide.CollectionCondition.*;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
@@ -47,6 +49,20 @@ public class FriendsPage {
                 requestsTable.$$("tr").should(texts(username));
             }
         }
+        return this;
+    }
+
+    @Nonnull
+    public FriendsPage acceptFriendRequest(String username) {
+        SelenideElement row = requestsTable.$$("tr").find(text(username));
+        row.find(byText("Accept")).click();
+        return this;
+    }
+
+    @Nonnull
+    public FriendsPage declineFriendRequest(String username) {
+        SelenideElement row = requestsTable.$$("tr").find(text(username));
+        row.find(byText("Decline")).click();
         return this;
     }
 }

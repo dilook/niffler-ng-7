@@ -33,6 +33,8 @@ public class ProfilePage {
 
   private final Calendar calendar = new Calendar($(".ProfileCalendar"));
 
+  private final SelenideElement alert = $(".MuiSnackbar-root");
+
   @Nonnull
   public ProfilePage setName(String name) {
     nameInput.clear();
@@ -92,6 +94,12 @@ public class ProfilePage {
   @Nonnull
   public ProfilePage submitProfile() {
     submitButton.click();
+    return this;
+  }
+
+  @Nonnull
+  public ProfilePage checkAlert(String message) {
+    alert.shouldHave(text(message));
     return this;
   }
 }
