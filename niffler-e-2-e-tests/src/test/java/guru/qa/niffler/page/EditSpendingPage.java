@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.Calendar;
+import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,12 +22,14 @@ public class EditSpendingPage {
   private final Calendar calendar = new Calendar($("[name='date']"));
 
   @Nonnull
+  @Step("Enter description {0}")
   public EditSpendingPage setNewSpendingDescription(String description) {
     descriptionInput.setValue(description);
     return this;
   }
 
   @Nonnull
+  @Step("Fill spending required fields")
   public MainPage fillAndSaveSpending(double amount, String category, String description) {
     amountInput.setValue(String.valueOf(amount));
     categoryInput.setValue(category);
@@ -36,6 +39,7 @@ public class EditSpendingPage {
     return new MainPage();
   }
 
+  @Step("Save spending")
   public void save() {
     saveBtn.click();
   }

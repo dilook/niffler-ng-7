@@ -3,6 +3,7 @@ package guru.qa.niffler.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -44,4 +45,14 @@ public record SpendJson(
         username
     );
   }
+
+    @Nonnull
+    @Override
+    public String toString() {
+        return "SpendJson{" +
+                "amount=" + amount +
+                ", category=" + category +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

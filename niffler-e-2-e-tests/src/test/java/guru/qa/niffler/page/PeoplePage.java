@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.SearchField;
+import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -18,6 +19,7 @@ public class PeoplePage {
     private final SearchField searchField = new SearchField();
 
     @Nonnull
+    @Step("Check invitations from users {0}")
     public PeoplePage checkInvitationSentToUser(String[] usernames) {
         for (String username : usernames) {
             searchField.search(username);

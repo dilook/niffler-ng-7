@@ -25,4 +25,13 @@ public record CategoryJson(
         entity.isArchived()
     );
   }
+
+    @Override
+    @Nonnull
+    public String toString() {
+        return "CategoryJson{" +
+                "name='" + name + '\'' +
+                ", archived=" + archived +
+                '}';
+    }
 }

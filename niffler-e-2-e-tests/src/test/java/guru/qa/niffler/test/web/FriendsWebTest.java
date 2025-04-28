@@ -81,7 +81,8 @@ public class FriendsWebTest {
             .checkThatPageLoaded()
             .getHeader().toFriendsPage()
             .checkExistingInvitations(friendName)
-            .acceptFriendRequest(friendName)
+            .declineFriendRequest(friendName)
+            .checkNoExistingInvitations()
             .checkNoExistingFriends();
   }
 }

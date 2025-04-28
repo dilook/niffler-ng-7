@@ -2,6 +2,7 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.SearchField;
+import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -21,8 +22,10 @@ public class FriendsPage {
     private final SelenideElement friendsTable = $("#friends");
 
     private final SearchField searchField = new SearchField();
+    private final SelenideElement dialog = $("[role='dialog']");
 
     @Nonnull
+    @Step("Check existing friends {0}")
     public FriendsPage checkExistingFriends(String... expectedUsernames) {
         List<String> usernameOnFirstPage = friendsTable.$$("tr td").shouldHave(sizeGreaterThan(0)).texts();
         for (String username : expectedUsernames) {
@@ -35,12 +38,21 @@ public class FriendsPage {
     }
 
     @Nonnull
+    @Step("Check no friends")
     public FriendsPage checkNoExistingFriends() {
         friendsTable.$$("tr").shouldHave(size(0));
         return this;
     }
 
     @Nonnull
+    @Step("Check no invitations")
+    public FriendsPage checkNoExistingInvitations() {
+        requestsTable.$$("tr").shouldHave(size(0));
+        return this;
+    }
+
+    @Nonnull
+    @Step("Check existing invitations {0}")
     public FriendsPage checkExistingInvitations(String... expectedUsernames) {
         List<String> usernameOnFirstPage = requestsTable.$$("tr td").shouldHave(sizeGreaterThan(0)).texts();
         for (String username : expectedUsernames) {
@@ -53,6 +65,7 @@ public class FriendsPage {
     }
 
     @Nonnull
+    @Step("Accept friend request")
     public FriendsPage acceptFriendRequest(String username) {
         SelenideElement row = requestsTable.$$("tr").find(text(username));
         row.find(byText("Accept")).click();
@@ -60,9 +73,11 @@ public class FriendsPage {
     }
 
     @Nonnull
+    @Step("Decline friend request")
     public FriendsPage declineFriendRequest(String username) {
         SelenideElement row = requestsTable.$$("tr").find(text(username));
         row.find(byText("Decline")).click();
+        dialog.find(byText("Decline")).click();
         return this;
     }
 }

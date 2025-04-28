@@ -54,4 +54,11 @@ public record UserJson(
         id, username, firstname, surname, fullname, currency, photo, photoSmall, friendshipStatus, testData
     );
   }
+
+    @Override
+    public String toString() {
+        return "UserJson{" +
+                "username='" + username + '\'' +
+                '}';
+    }
 }
