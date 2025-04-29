@@ -11,6 +11,7 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static java.util.Objects.requireNonNull;
@@ -18,51 +19,61 @@ import static java.util.Objects.requireNonNull;
 @ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  private final SpendRepository spendRepository = new SpendRepositoryJdbc();
+    private final SpendRepository spendRepository = new SpendRepositoryJdbc();
 
-  private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
-      CFG.spendJdbcUrl()
-  );
+    private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
+            CFG.spendJdbcUrl()
+    );
 
-  @Nonnull
-  @Override
-  public SpendJson createSpend(SpendJson spend) {
-    return requireNonNull(
-        xaTransactionTemplate.execute(
-            () -> SpendJson.fromEntity(
-                spendRepository.create(
-                    SpendEntity.fromJson(spend)
+    @Nonnull
+    @Override
+    public SpendJson createSpend(SpendJson spend) {
+        return requireNonNull(
+                xaTransactionTemplate.execute(
+                        () -> SpendJson.fromEntity(
+                                spendRepository.create(
+                                        SpendEntity.fromJson(spend)
+                                )
+                        )
                 )
-            )
-        )
-    );
-  }
+        );
+    }
 
-  @Nonnull
-  @Override
-  public CategoryJson createCategory(CategoryJson category) {
-    return requireNonNull(
-        xaTransactionTemplate.execute(
-            () -> CategoryJson.fromEntity(
-                spendRepository.createCategory(
-                    CategoryEntity.fromJson(category)
+    @Nonnull
+    @Override
+    public CategoryJson createCategory(CategoryJson category) {
+        return requireNonNull(
+                xaTransactionTemplate.execute(
+                        () -> CategoryJson.fromEntity(
+                                spendRepository.createCategory(
+                                        CategoryEntity.fromJson(category)
+                                )
+                        )
                 )
-            )
-        )
-    );
-  }
+        );
+    }
 
-  @Override
-  public void removeCategory(CategoryJson category) {
-    xaTransactionTemplate.execute(
-        () -> {
-          spendRepository.removeCategory(
-              CategoryEntity.fromJson(category)
-          );
-          return null;
-        }
-    );
-  }
+    @Override
+    public void removeCategory(CategoryJson category) {
+        xaTransactionTemplate.execute(
+                () -> {
+                    spendRepository.removeCategory(
+                            CategoryEntity.fromJson(category)
+                    );
+                    return null;
+                }
+        );
+    }
+
+    @Override
+    @Nullable
+    public CategoryJson findCategoryByUsernameAndName(String username, String name) {
+        return xaTransactionTemplate.execute(
+                () -> spendRepository.findCategoryByUsernameAndCategoryName(username, name)
+                        .map(CategoryJson::fromEntity)
+                        .orElse(null)
+        );
+    }
 }

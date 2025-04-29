@@ -7,7 +7,6 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -54,4 +53,11 @@ public record UserJson(
         id, username, firstname, surname, fullname, currency, photo, photoSmall, friendshipStatus, testData
     );
   }
+
+    @Override
+    public String toString() {
+        return "UserJson{" +
+                "username='" + username + '\'' +
+                '}';
+    }
 }

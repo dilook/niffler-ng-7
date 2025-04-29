@@ -67,7 +67,7 @@ public class CategoryDaoJdbc implements CategoryDao {
       ps.execute();
       try (ResultSet rs = ps.getResultSet()) {
         if (rs.next()) {
-          return Optional.ofNullable(
+          return Optional.of(
               CategoryEntityRowMapper.instance.mapRow(rs, rs.getRow())
           );
         } else {

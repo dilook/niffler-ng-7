@@ -70,7 +70,7 @@ public class SpendDaoJdbc implements SpendDao {
       ps.execute();
       try (ResultSet rs = ps.getResultSet()) {
         if (rs.next()) {
-          return Optional.ofNullable(
+          return Optional.of(
               SpendEntityRowMapper.instance.mapRow(rs, rs.getRow())
           );
         } else {
