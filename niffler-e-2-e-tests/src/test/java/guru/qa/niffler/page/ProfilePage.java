@@ -32,10 +32,6 @@ public class ProfilePage extends BasePage<ProfilePage> {
   private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
 
-  private final Calendar calendar = new Calendar($(".ProfileCalendar"));
-
-  private final SelenideElement alert = $(".MuiSnackbar-root");
-
   @Nonnull
   @Step("Set username {0}")
   public ProfilePage setName(String name) {
@@ -108,10 +104,4 @@ public class ProfilePage extends BasePage<ProfilePage> {
     return this;
   }
 
-  @Nonnull
-  @Step("Check alert {0}")
-  public ProfilePage checkAlert(String message) {
-    alert.shouldHave(text(message));
-    return this;
-  }
 }

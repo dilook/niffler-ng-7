@@ -51,6 +51,7 @@ public class SpendingWebTest {
                     RandomDataUtils.randomCategoryName(),
                     categoryDescription
             )
+            .checkAlertMessage("New spending is successfully created")
             .getSpendingTable()
             .checkThatTableContainsSpending(categoryDescription);
   }

@@ -10,12 +10,12 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
-public class SelectField {
+public class SelectField extends BaseComponent<SelectField>{
 
     public SelectField(SelenideElement self) {
-        this.self = self;
+        super(self);
     }
-    private final SelenideElement self;
+
     private final ElementsCollection selectItems = $$("ul li[role='option']");
 
 
