@@ -11,6 +11,8 @@ import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
 import guru.qa.niffler.data.repository.impl.UserdataUserRepositoryJdbc;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.FriendshipStatus;
+import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -45,7 +47,7 @@ public class UsersDbClient implements UsersClient {
             () -> UserJson.fromEntity(
                 createNewUser(username, password),
                 null
-            )
+            ).addTestData(new TestData(password))
         )
     );
   }
@@ -59,11 +61,12 @@ public class UsersDbClient implements UsersClient {
 
       for (int i = 0; i < count; i++) {
         xaTransactionTemplate.execute(() -> {
-              final String username = randomUsername();
+              UserEntity newUser = createNewUser(randomUsername(), "12345");
               userdataUserRepository.addFriendshipRequest(
-                  createNewUser(username, "12345"),
+                  newUser,
                   targetEntity
               );
+              targetUser.testData().incomeInvitations().add(UserJson.fromEntity(newUser, null));
               return null;
             }
         );
@@ -80,12 +83,13 @@ public class UsersDbClient implements UsersClient {
 
       for (int i = 0; i < count; i++) {
         xaTransactionTemplate.execute(() -> {
-              String username = randomUsername();
-              userdataUserRepository.addFriendshipRequest(
+            UserEntity newUser = createNewUser(randomUsername(), "12345");
+            userdataUserRepository.addFriendshipRequest(
                   targetEntity,
-                  createNewUser(username, "12345")
+                    newUser
               );
-              return null;
+            targetUser.testData().outcomeInvitations().add(UserJson.fromEntity(newUser, null));
+            return null;
             }
         );
       }
@@ -101,12 +105,13 @@ public class UsersDbClient implements UsersClient {
 
       for (int i = 0; i < count; i++) {
         xaTransactionTemplate.execute(() -> {
-              String username = randomUsername();
+              UserEntity newUser = createNewUser(randomUsername(), "12345");
               userdataUserRepository.addFriend(
                   targetEntity,
-                  createNewUser(username, "12345")
+                  newUser
               );
-              return null;
+            targetUser.testData().friends().add(UserJson.fromEntity(newUser, FriendshipStatus.FRIEND));
+            return null;
             }
         );
       }

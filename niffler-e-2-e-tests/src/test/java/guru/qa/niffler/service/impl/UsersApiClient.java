@@ -47,8 +47,9 @@ public class UsersApiClient implements UsersClient {
 
     }
 
-    // При создании юзеров через апи иногда ивент не успевает обработаться в кафке в и создаться в сервисе userdata,
-    // поэтому необходимо подождать
+    /**
+     *  При создании юзеров через апи иногда ивент из кафки не успевает обработаться в сервисе userdata, поэтому необходимо подождать
+     */
     @NotNull
     private UserJson waitAndGetUser(String username, String password) throws IOException, InterruptedException {
         StopWatch sw = StopWatch.createStarted();
