@@ -25,7 +25,7 @@ public class RandomDataUtils {
 
   @Nonnull
   public static String randomCategoryName() {
-    return faker.food().fruit();
+    return faker.food().ingredient();
   }
 
   @Nonnull
