@@ -3,7 +3,6 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.page.component.Calendar;
 import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
@@ -31,10 +30,6 @@ public class ProfilePage extends BasePage<ProfilePage> {
   private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
   private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
-
-  private final Calendar calendar = new Calendar($(".ProfileCalendar"));
-
-  private final SelenideElement alert = $(".MuiSnackbar-root");
 
   @Nonnull
   @Step("Set username {0}")
@@ -108,10 +103,4 @@ public class ProfilePage extends BasePage<ProfilePage> {
     return this;
   }
 
-  @Nonnull
-  @Step("Check alert {0}")
-  public ProfilePage checkAlert(String message) {
-    alert.shouldHave(text(message));
-    return this;
-  }
 }

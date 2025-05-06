@@ -3,7 +3,6 @@ package guru.qa.niffler.page.component;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -13,14 +12,13 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class PeopleTable {
+public class PeopleTable extends BaseComponent<PeopleTable> {
 
-    @Getter
-    private final SelenideElement self = $("#simple-tabpanel-all");
     private final ElementsCollection rows = self.$("tbody").$$("tr");
     private final SearchField searchField = new SearchField();
 
     public PeopleTable() {
+        super($("#simple-tabpanel-all"));
         self.shouldBe(visible);
     }
 

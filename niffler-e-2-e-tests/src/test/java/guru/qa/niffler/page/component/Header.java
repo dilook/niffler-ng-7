@@ -15,8 +15,6 @@ import static com.codeborne.selenide.Selenide.$$;
 @ParametersAreNonnullByDefault
 public class Header extends BaseComponent<Header> {
 
-    private final SelenideElement self = $("#root header");
-
     private final SelenideElement header = self.$("h1");
 
     private final SelenideElement buttonMenu = self.$("button");
@@ -24,6 +22,10 @@ public class Header extends BaseComponent<Header> {
     private final ElementsCollection menuItems = $$("#account-menu li");
 
     private final SelenideElement addNewSending = self.$("a[href='/spending']");
+
+    public Header() {
+        super($("#root header"));
+    }
 
     @Nonnull
     @Step("Navigate to friends page")

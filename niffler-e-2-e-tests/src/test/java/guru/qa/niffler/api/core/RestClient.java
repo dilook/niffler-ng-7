@@ -65,7 +65,7 @@ public abstract class RestClient {
     return this.retrofit.create(service);
   }
 
-  public final class EmtyRestClient extends RestClient {
+  public static final class EmtyRestClient extends RestClient {
     public EmtyRestClient(String baseUrl) {
       super(baseUrl);
     }

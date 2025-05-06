@@ -6,6 +6,11 @@ import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Потокобезопасная реализация CookieStore, которая поддерживает отдельное хранилище cookie для каждого потока.
+ * Этот enum-singleton гарантирует, что каждый поток имеет свой собственный изолированный экземпляр хранилища cookie,
+ * предотвращая проблемы одновременного изменения в многопоточной тестовой среде.
+ */
 public enum ThreadSafeCookieStore implements CookieStore {
   INSTANCE;
 

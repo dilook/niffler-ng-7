@@ -6,7 +6,6 @@ import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.DataFilterValues;
 import guru.qa.niffler.page.EditSpendingPage;
 import io.qameta.allure.Step;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -17,10 +16,7 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class SpendingTable {
-
-    @Getter
-    private final SelenideElement self = $("#spendings");
+public class SpendingTable extends BaseComponent<SpendingTable> {
 
     private final SelectField periodSelect = new SelectField(self.$("#period"));
     private final SelectField currencySelect = new SelectField(self.$("#currency"));
@@ -29,6 +25,7 @@ public class SpendingTable {
     private final SelenideElement deleteButton = self.$("#delete");
 
     public SpendingTable() {
+        super($("#spendings"));
         self.shouldBe(visible);
     }
 
