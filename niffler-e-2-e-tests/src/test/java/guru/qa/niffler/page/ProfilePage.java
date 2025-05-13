@@ -2,11 +2,14 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +23,7 @@ import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
 public class ProfilePage extends BasePage<ProfilePage> {
@@ -126,5 +130,14 @@ public class ProfilePage extends BasePage<ProfilePage> {
   public ProfilePage checkThatPageLoaded() {
     userName.should(visible);
     return this;
+  }
+
+  @Step("Check that avatar is the same as expected image")
+  public void checkAvatarByScreenshot(BufferedImage expectedImage) throws IOException {
+    BufferedImage actualImage = ImageIO.read(avatar.screenshot());
+    assertFalse(new ScreenDiffResult(
+            expectedImage,
+            actualImage
+    ));
   }
 }

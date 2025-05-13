@@ -35,7 +35,11 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
   @SneakyThrows
   @Override
   public BufferedImage resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return ImageIO.read(new ClassPathResource("img/expected-stat.png").getInputStream());
+    String path = AnnotationSupport.findAnnotation(extensionContext.getRequiredTestMethod(), ScreenShotTest.class).get().value();
+    if ("".equals(path)) {
+      throw new IllegalArgumentException("Screenshot path cannot be empty");
+    }
+    return ImageIO.read(new ClassPathResource(path).getInputStream());
   }
 
   @Override
@@ -51,6 +55,18 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
         "application/vnd.allure.image.diff",
         objectMapper.writeValueAsString(screenDif)
     );
+
+    if (AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ScreenShotTest.class)
+            .get()
+            .rewriteExpectedImage()) {
+        ImageIO.write(getActual(),
+                "png",
+                new ClassPathResource(
+                        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ScreenShotTest.class)
+                                .get()
+                                .value()).getFile()
+        );
+    }
     throw throwable;
   }
 
