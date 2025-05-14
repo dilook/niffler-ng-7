@@ -131,8 +131,8 @@ public class SpendingWebTest {
 
     BufferedImage actual = ImageIO.read($("canvas[role='img']").screenshot());
     assertFalse(new ScreenDiffResult(
-        expected,
-        actual
+        actual,
+        expected
     ));
   }
 }

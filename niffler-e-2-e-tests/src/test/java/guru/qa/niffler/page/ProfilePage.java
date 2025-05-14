@@ -136,8 +136,8 @@ public class ProfilePage extends BasePage<ProfilePage> {
   public void checkAvatarByScreenshot(BufferedImage expectedImage) throws IOException {
     BufferedImage actualImage = ImageIO.read(avatar.screenshot());
     assertFalse(new ScreenDiffResult(
-            expectedImage,
-            actualImage
+            actualImage,
+            expectedImage
     ));
   }
 }

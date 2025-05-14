@@ -16,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -56,15 +57,11 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
         objectMapper.writeValueAsString(screenDif)
     );
 
-    if (AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ScreenShotTest.class)
-            .get()
-            .rewriteExpectedImage()) {
+    ScreenShotTest anno = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ScreenShotTest.class).get();
+    if (anno.rewriteExpectedImage()) {
         ImageIO.write(getActual(),
                 "png",
-                new ClassPathResource(
-                        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ScreenShotTest.class)
-                                .get()
-                                .value()).getFile()
+                new File("src/test/resources/" + anno.value())
         );
     }
     throw throwable;

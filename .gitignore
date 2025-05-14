@@ -43,3 +43,4 @@ out/
 *.log
 *.lck
 schema.graphqls
+/logs/
