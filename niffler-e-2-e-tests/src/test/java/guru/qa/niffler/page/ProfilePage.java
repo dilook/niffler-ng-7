@@ -2,24 +2,30 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import static com.codeborne.selenide.ClickOptions.usingJavaScript;
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.attributeMatching;
 import static com.codeborne.selenide.Condition.disabled;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
 public class ProfilePage extends BasePage<ProfilePage> {
@@ -33,6 +39,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
   private final SelenideElement submitButton = $("button[type='submit']");
   private final SelenideElement categoryInput = $("input[name='category']");
   private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
+  private final SelenideElement popup = $("div[role='dialog']");
 
   private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
@@ -125,6 +132,21 @@ public class ProfilePage extends BasePage<ProfilePage> {
   @Nonnull
   public ProfilePage checkThatPageLoaded() {
     userName.should(visible);
+    return this;
+  }
+
+  @Step("Check that avatar is the same as expected image")
+  public void checkAvatarByScreenshot(BufferedImage expectedImage) throws IOException {
+    BufferedImage actualImage = ImageIO.read(avatar.screenshot());
+    assertFalse(new ScreenDiffResult(
+            actualImage,
+            expectedImage
+    ));
+  }
+
+  public ProfilePage archiveCategory(String category) {
+    bubbles.find(text(category)).parent().$("button[aria-label='Archive category']").click();
+    popup.$(byText("Archive")).click(usingJavaScript());
     return this;
   }
 }

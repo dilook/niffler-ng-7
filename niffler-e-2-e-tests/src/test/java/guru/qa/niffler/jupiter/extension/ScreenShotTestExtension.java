@@ -16,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
@@ -35,7 +36,11 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
   @SneakyThrows
   @Override
   public BufferedImage resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return ImageIO.read(new ClassPathResource("img/expected-stat.png").getInputStream());
+    String path = AnnotationSupport.findAnnotation(extensionContext.getRequiredTestMethod(), ScreenShotTest.class).get().value();
+    if ("".equals(path)) {
+      throw new IllegalArgumentException("Screenshot path cannot be empty");
+    }
+    return ImageIO.read(new ClassPathResource(path).getInputStream());
   }
 
   @Override
@@ -51,6 +56,14 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
         "application/vnd.allure.image.diff",
         objectMapper.writeValueAsString(screenDif)
     );
+
+    ScreenShotTest anno = AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ScreenShotTest.class).get();
+    if (anno.rewriteExpectedImage()) {
+        ImageIO.write(getActual(),
+                "png",
+                new File("src/test/resources/" + anno.value())
+        );
+    }
     throw throwable;
   }
 

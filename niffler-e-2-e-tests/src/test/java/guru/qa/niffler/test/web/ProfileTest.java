@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.Category;
+import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.rest.UserJson;
@@ -10,11 +11,31 @@ import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.Test;
 
+import java.awt.image.BufferedImage;
+
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 
 @WebTest
 public class ProfileTest {
+
+  @User
+  @ScreenShotTest(value = "img/expected_avatar.png")
+  void shouldProfileImageSaved(UserJson user, BufferedImage expected) throws Exception {
+    ProfilePage profilePage = Selenide.open(LoginPage.URL, LoginPage.class)
+            .fillLoginPage(user.username(), user.testData().password())
+            .submit(new MainPage())
+            .checkThatPageLoaded()
+            .getHeader()
+            .toProfilePage()
+            .uploadPhotoFromClasspath("img/ava.png")
+            .submitProfile()
+            .checkAlertMessage("Profile successfully updated");
+
+    Selenide.refresh();
+
+    profilePage.checkAvatarByScreenshot(expected);
+  }
 
   @User(
       categories = @Category(

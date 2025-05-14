@@ -40,3 +40,7 @@ out/
 
 ### gRPC generated files ###
 /niffler-grpc-common/src/generated/**
+*.log
+*.lck
+schema.graphqls
+/logs/
