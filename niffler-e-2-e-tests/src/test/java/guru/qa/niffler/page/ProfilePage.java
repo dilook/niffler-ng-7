@@ -15,12 +15,14 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import static com.codeborne.selenide.ClickOptions.usingJavaScript;
 import static com.codeborne.selenide.Condition.attribute;
 import static com.codeborne.selenide.Condition.attributeMatching;
 import static com.codeborne.selenide.Condition.disabled;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.value;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -37,6 +39,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
   private final SelenideElement submitButton = $("button[type='submit']");
   private final SelenideElement categoryInput = $("input[name='category']");
   private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
+  private final SelenideElement popup = $("div[role='dialog']");
 
   private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
   private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
@@ -139,5 +142,11 @@ public class ProfilePage extends BasePage<ProfilePage> {
             actualImage,
             expectedImage
     ));
+  }
+
+  public ProfilePage archiveCategory(String category) {
+    bubbles.find(text(category)).parent().$("button[aria-label='Archive category']").click();
+    popup.$(byText("Archive")).click(usingJavaScript());
+    return this;
   }
 }
