@@ -1,0 +1,122 @@
+package guru.qa.niffler.condition;
+
+import com.codeborne.selenide.CheckResult;
+import com.codeborne.selenide.Driver;
+import com.codeborne.selenide.WebElementsCondition;
+import com.codeborne.selenide.impl.ElementCommunicator;
+import com.codeborne.selenide.impl.Html;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+import org.openqa.selenium.WebElement;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.codeborne.selenide.CheckResult.accepted;
+import static com.codeborne.selenide.CheckResult.rejected;
+import static com.codeborne.selenide.impl.Plugins.inject;
+
+public class BubblesCondition extends WebElementsCondition {
+
+    private record SimpleBubble(String rgba, String text) {
+    }
+
+    private final Bubble[] expectedBubbles;
+    private final Color[] expectedColors;
+    private final List<String> expectedTexts;
+    private static final ElementCommunicator communicator = inject(ElementCommunicator.class);
+
+    public BubblesCondition(Bubble[] expectedBubbles) {
+        this.expectedBubbles = expectedBubbles;
+        this.expectedColors = Arrays.stream(expectedBubbles).map(Bubble::color).toArray(Color[]::new);
+        this.expectedTexts = Arrays.stream(expectedBubbles).map(Bubble::text).toList();
+
+        if (ArrayUtils.isEmpty(expectedBubbles)) {
+            throw new IllegalArgumentException("No expected bubbles given");
+        }
+    }
+
+    @NotNull
+    @Override
+    public CheckResult check(Driver driver, List<WebElement> elements) {
+        if (expectedBubbles.length != elements.size()) {
+            final String message = String.format("List size mismatch (expected: %s, actual: %s)",
+                    expectedBubbles.length, elements.size());
+            return rejected(message, elements);
+        }
+
+        List<String> actualTexts = communicator.texts(driver, elements);
+        final List<SimpleBubble> actualBubbles = collectActualBubbles(elements, actualTexts);
+        boolean allMatch = checkAllBubblesMatch(actualBubbles);
+
+        if (!allMatch) {
+            return createMismatchResult(actualBubbles);
+        }
+
+        return accepted();
+    }
+
+    private List<SimpleBubble> collectActualBubbles(List<WebElement> elements, List<String> actualTexts) {
+        List<SimpleBubble> actualBubbles = new ArrayList<>();
+
+        for (int i = 0; i < elements.size(); i++) {
+            final WebElement element = elements.get(i);
+            final String actualRgba = element.getCssValue("background-color");
+            final String actualText = actualTexts.get(i);
+
+            actualBubbles.add(new SimpleBubble(actualRgba, actualText));
+        }
+
+        return actualBubbles;
+    }
+
+    private boolean checkAllBubblesMatch(List<SimpleBubble> actualBubbles) {
+        for (int i = 0; i < actualBubbles.size(); i++) {
+            SimpleBubble actual = actualBubbles.get(i);
+            String expectedRgba = expectedColors[i].rgb;
+            String expectedText = expectedTexts.get(i);
+
+            if (!expectedRgba.equals(actual.rgba()) || !Html.text.equals(actual.text(), expectedText)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private CheckResult createMismatchResult(List<SimpleBubble> actualBubbles) {
+        StringBuilder stringBuilder = new StringBuilder("List bubbles mismatch [\n");
+
+        for (int i = 0; i < actualBubbles.size(); i++) {
+            SimpleBubble actual = actualBubbles.get(i);
+            String expectedRgba = expectedColors[i].rgb;
+            String expectedText = expectedTexts.get(i);
+
+            stringBuilder.append(
+                    String.format("expected: new Bubble(color=%s, text=%s) actual: new Bubble(color=%s, text=%s))\n",
+                            expectedRgba, expectedText, actual.rgba(), actual.text()
+                    )
+            );
+        }
+
+        return rejected(stringBuilder.append("\n]").toString(), formatBubbles(actualBubbles));
+    }
+
+    @Override
+    public String toString() {
+        return formatBubbles(expectedBubbles);
+    }
+
+    private String formatBubbles(List<SimpleBubble> bubbles) {
+        return bubbles.stream()
+                .map(bubble -> String.format("Bubble[%s, text=%s]", bubble.rgba(), bubble.text()))
+                .collect(Collectors.joining(", ", "[", "]"));
+    }
+
+    private String formatBubbles(Bubble... bubbles) {
+        return Arrays.stream(bubbles)
+                .map(bubble -> String.format("Bubble[%s, text=%s]", bubble.color().rgb, bubble.text()))
+                .collect(Collectors.joining(", ", "[", "]"));
+    }
+}
