@@ -5,7 +5,6 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.condition.Bubble;
-import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.jupiter.extension.ScreenShotTestExtension;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
@@ -17,7 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.$;
-import static guru.qa.niffler.condition.StatConditions.bubble;
+import static guru.qa.niffler.condition.StatConditions.bubbles;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -61,7 +60,7 @@ public class StatComponent extends BaseComponent<StatComponent> {
   @Step("Check that stat bubbles contains colors {expectedBubbles}")
   @Nonnull
   public StatComponent checkBubbles(Bubble... expectedBubbles) {
-    bubbles.shouldHave(bubble(expectedBubbles));
+    bubbles.shouldHave(bubbles(expectedBubbles));
     return this;
   }
 }
