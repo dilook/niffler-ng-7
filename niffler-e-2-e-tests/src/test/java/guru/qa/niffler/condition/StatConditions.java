@@ -21,8 +21,10 @@ import static com.codeborne.selenide.CheckResult.rejected;
 public class StatConditions {
 
   @Nonnull
-  public static WebElementCondition color(Color expectedColor) {
-    return new WebElementCondition("color " + expectedColor.rgb) {
+  public static WebElementCondition bubble(Bubble expectedBubble) {
+    final Color expectedColor = expectedBubble.color();
+
+    return new WebElementCondition("color " + expectedColor.rgb + ", text " + expectedBubble.text()) {
       @NotNull
       @Override
       public CheckResult check(Driver driver, WebElement element) {
@@ -36,10 +38,12 @@ public class StatConditions {
   }
 
   @Nonnull
-  public static WebElementsCondition color(@Nonnull Color... expectedColors) {
+  public static WebElementsCondition bubble(@Nonnull Bubble... expectedBubbles) {
     return new WebElementsCondition() {
 
+      private final Color[] expectedColors = Arrays.stream(expectedBubbles).map(Bubble::color).toArray(Color[]::new);
       private final String expectedRgba = Arrays.stream(expectedColors).map(c -> c.rgb).toList().toString();
+      private final List<String> expectedText = Arrays.stream(expectedBubbles).map(Bubble::text).toList();
 
       @NotNull
       @Override
@@ -49,6 +53,13 @@ public class StatConditions {
         }
         if (expectedColors.length != elements.size()) {
           final String message = String.format("List size mismatch (expected: %s, actual: %s)", expectedColors.length, elements.size());
+          return rejected(message, elements);
+        }
+        if (expectedText.isEmpty()) {
+          throw new IllegalArgumentException("No expected texts given");
+        }
+        if (expectedText.size() != elements.size()) {
+          final String message = String.format("List size mismatch (expected: %s, actual: %s)", expectedText.size(), elements.size());
           return rejected(message, elements);
         }
 
