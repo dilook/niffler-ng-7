@@ -41,15 +41,15 @@ public class BubblesCondition extends WebElementsCondition {
     @NotNull
     @Override
     public CheckResult check(Driver driver, List<WebElement> elements) {
-        if (expectedBubbles.length != elements.size()) {
-            final String message = String.format("List size mismatch (expected: %s, actual: %s)",
-                    expectedBubbles.length, elements.size());
-            return rejected(message, elements);
-        }
-
         List<String> actualTexts = communicator.texts(driver, elements);
         final List<SimpleBubble> actualBubbles = collectActualBubbles(elements, actualTexts);
         boolean allMatch = checkAllBubblesMatch(actualBubbles);
+
+        if (expectedBubbles.length != elements.size()) {
+            final String message = String.format("List size mismatch (expected: %s, actual: %s)",
+                    expectedBubbles.length, elements.size());
+            return rejected(message, formatBubbles(actualBubbles));
+        }
 
         if (!allMatch) {
             return createMismatchResult(actualBubbles);
