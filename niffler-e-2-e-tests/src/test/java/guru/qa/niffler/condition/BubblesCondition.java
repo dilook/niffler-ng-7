@@ -12,7 +12,6 @@ import org.openqa.selenium.WebElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.codeborne.selenide.CheckResult.accepted;
 import static com.codeborne.selenide.CheckResult.rejected;
@@ -113,15 +112,4 @@ public class BubblesCondition extends WebElementsCondition {
         return Arrays.toString(expectedBubbles);
     }
 
-//    private String formatBubbles(List<SimpleBubble> bubbles) {
-//        return bubbles.stream()
-//                .map(bubble -> String.format("Bubble{%s, text=%s}", bubble.rgba(), bubble.text()))
-//                .collect(Collectors.joining(", ", "[", "]"));
-//    }
-//
-//    private String formatBubbles(Bubble... bubbles) {
-//        return Arrays.stream(bubbles)
-//                .map(bubble -> String.format("Bubble{%s, text=%s}", bubble.color().rgb, bubble.text()))
-//                .collect(Collectors.joining(", ", "[", "]"));
-//    }
 }

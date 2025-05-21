@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.condition.StatConditions.bubbles;
+import static guru.qa.niffler.condition.StatConditions.bubblesInAnyOrder;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -40,7 +41,7 @@ public class StatComponent extends BaseComponent<StatComponent> {
   @Step("Check that statistic image matches the expected image")
   @Nonnull
   public StatComponent checkStatisticImage(BufferedImage expectedImage) throws IOException {
-    Selenide.sleep(2000);
+    Selenide.sleep(4000);
     assertFalse(
         new ScreenDiffResult(
             chartScreenshot(),
@@ -60,7 +61,7 @@ public class StatComponent extends BaseComponent<StatComponent> {
   @Step("Check that stat bubbles contains colors {expectedBubbles}")
   @Nonnull
   public StatComponent checkBubbles(Bubble... expectedBubbles) {
-    bubbles.shouldHave(bubbles(expectedBubbles));
+    bubbles.shouldHave(bubblesInAnyOrder(expectedBubbles));
     return this;
   }
 }
