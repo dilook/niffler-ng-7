@@ -36,4 +36,8 @@ public class StatConditions {
         return new BubblesCondition(expectedBubbles);
     }
 
+    public static WebElementCondition bubblesInAnyOrder(@Nonnull Bubble... expectedBubbles) {
+        return new BubblesInAnyOrderCondition("");
+    }
+
 }

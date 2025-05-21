@@ -21,6 +21,11 @@ import static com.codeborne.selenide.impl.Plugins.inject;
 public class BubblesCondition extends WebElementsCondition {
 
     private record SimpleBubble(String rgba, String text) {
+        @NotNull
+        @Override
+        public String toString() {
+            return String.format("Bubble{%s, text=%s}", rgba, text);
+        }
     }
 
     private final Bubble[] expectedBubbles;
@@ -48,7 +53,7 @@ public class BubblesCondition extends WebElementsCondition {
         if (expectedBubbles.length != elements.size()) {
             final String message = String.format("List size mismatch (expected: %s, actual: %s)",
                     expectedBubbles.length, elements.size());
-            return rejected(message, formatBubbles(actualBubbles));
+            return rejected(message, ArrayUtils.toString(actualBubbles));
         }
 
         if (!allMatch) {
@@ -94,29 +99,29 @@ public class BubblesCondition extends WebElementsCondition {
             String expectedText = expectedTexts.get(i);
 
             stringBuilder.append(
-                    String.format("expected: new Bubble(color=%s, text=%s) actual: new Bubble(color=%s, text=%s))\n",
+                    String.format("expected: Bubble{%s, text=%s} actual: Bubble{%s, text=%s})\n",
                             expectedRgba, expectedText, actual.rgba(), actual.text()
                     )
             );
         }
 
-        return rejected(stringBuilder.append("\n]").toString(), formatBubbles(actualBubbles));
+        return rejected(stringBuilder.append("\n]").toString(), actualBubbles.toString());
     }
 
     @Override
     public String toString() {
-        return formatBubbles(expectedBubbles);
+        return Arrays.toString(expectedBubbles);
     }
 
-    private String formatBubbles(List<SimpleBubble> bubbles) {
-        return bubbles.stream()
-                .map(bubble -> String.format("Bubble[%s, text=%s]", bubble.rgba(), bubble.text()))
-                .collect(Collectors.joining(", ", "[", "]"));
-    }
-
-    private String formatBubbles(Bubble... bubbles) {
-        return Arrays.stream(bubbles)
-                .map(bubble -> String.format("Bubble[%s, text=%s]", bubble.color().rgb, bubble.text()))
-                .collect(Collectors.joining(", ", "[", "]"));
-    }
+//    private String formatBubbles(List<SimpleBubble> bubbles) {
+//        return bubbles.stream()
+//                .map(bubble -> String.format("Bubble{%s, text=%s}", bubble.rgba(), bubble.text()))
+//                .collect(Collectors.joining(", ", "[", "]"));
+//    }
+//
+//    private String formatBubbles(Bubble... bubbles) {
+//        return Arrays.stream(bubbles)
+//                .map(bubble -> String.format("Bubble{%s, text=%s}", bubble.color().rgb, bubble.text()))
+//                .collect(Collectors.joining(", ", "[", "]"));
+//    }
 }
