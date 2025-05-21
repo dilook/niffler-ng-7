@@ -8,6 +8,7 @@ import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
@@ -165,5 +166,38 @@ public class SpendingWebTest {
         .checkBubblesContains(
                 new Bubble(Color.green,"Страховка 6000 ₽")
         );
+  }
+
+  @User(
+          categories = {
+                  @Category(name = "Поездки"),
+                  @Category(name = "Ремонт", archived = true),
+                  @Category(name = "Страховка", archived = true)
+          },
+          spendings = {
+                  @Spending(
+                          category = "Поездки",
+                          description = "В Москву",
+                          amount = 9500
+                  ),
+                  @Spending(
+                          category = "Ремонт",
+                          description = "Цемент",
+                          amount = 100
+                  ),
+                  @Spending(
+                          category = "Страховка",
+                          description = "ОСАГО",
+                          amount = 3000
+                  )
+          }
+  )
+  @Test
+  void spendsShouldHaveCorrectInfo(UserJson user) throws IOException {
+    Selenide.open(LoginPage.URL, LoginPage.class)
+            .fillLoginPage(user.username(), user.testData().password())
+            .submit(new MainPage())
+            .getSpendingTable()
+            .checkTableContains(user.testData().spends().toArray(new SpendJson[0]));
   }
 }
