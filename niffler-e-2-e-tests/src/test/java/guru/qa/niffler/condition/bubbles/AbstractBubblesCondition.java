@@ -1,10 +1,9 @@
-package guru.qa.niffler.condition;
+package guru.qa.niffler.condition.bubbles;
 
 import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.WebElementsCondition;
 import com.codeborne.selenide.impl.ElementCommunicator;
-import com.codeborne.selenide.impl.Html;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebElement;
@@ -13,13 +12,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.codeborne.selenide.CheckResult.accepted;
 import static com.codeborne.selenide.CheckResult.rejected;
 import static com.codeborne.selenide.impl.Plugins.inject;
 
-public class BubblesCondition extends WebElementsCondition {
+public abstract class AbstractBubblesCondition extends WebElementsCondition {
 
-    private record SimpleBubble(String rgba, String text) {
+    protected record SimpleBubble(String rgba, String text) {
         @NotNull
         @Override
         public String toString() {
@@ -27,12 +25,12 @@ public class BubblesCondition extends WebElementsCondition {
         }
     }
 
-    private final Bubble[] expectedBubbles;
-    private final Color[] expectedColors;
-    private final List<String> expectedTexts;
-    private static final ElementCommunicator communicator = inject(ElementCommunicator.class);
+    protected final Bubble[] expectedBubbles;
+    protected final Color[] expectedColors;
+    protected final List<String> expectedTexts;
+    protected static final ElementCommunicator communicator = inject(ElementCommunicator.class);
 
-    public BubblesCondition(Bubble[] expectedBubbles) {
+    public AbstractBubblesCondition(Bubble[] expectedBubbles) {
         this.expectedBubbles = expectedBubbles;
         this.expectedColors = Arrays.stream(expectedBubbles).map(Bubble::color).toArray(Color[]::new);
         this.expectedTexts = Arrays.stream(expectedBubbles).map(Bubble::text).toList();
@@ -44,25 +42,9 @@ public class BubblesCondition extends WebElementsCondition {
 
     @NotNull
     @Override
-    public CheckResult check(Driver driver, List<WebElement> elements) {
-        List<String> actualTexts = communicator.texts(driver, elements);
-        final List<SimpleBubble> actualBubbles = collectActualBubbles(elements, actualTexts);
-        boolean allMatch = checkAllBubblesMatch(actualBubbles);
+    public abstract CheckResult check(Driver driver, List<WebElement> elements);
 
-        if (expectedBubbles.length != elements.size()) {
-            final String message = String.format("List size mismatch (expected: %s, actual: %s)",
-                    expectedBubbles.length, elements.size());
-            return rejected(message, ArrayUtils.toString(actualBubbles));
-        }
-
-        if (!allMatch) {
-            return createMismatchResult(actualBubbles);
-        }
-
-        return accepted();
-    }
-
-    private List<SimpleBubble> collectActualBubbles(List<WebElement> elements, List<String> actualTexts) {
+    protected List<SimpleBubble> collectActualBubbles(List<WebElement> elements, List<String> actualTexts) {
         List<SimpleBubble> actualBubbles = new ArrayList<>();
 
         for (int i = 0; i < elements.size(); i++) {
@@ -76,20 +58,7 @@ public class BubblesCondition extends WebElementsCondition {
         return actualBubbles;
     }
 
-    private boolean checkAllBubblesMatch(List<SimpleBubble> actualBubbles) {
-        for (int i = 0; i < actualBubbles.size(); i++) {
-            SimpleBubble actual = actualBubbles.get(i);
-            String expectedRgba = expectedColors[i].rgb;
-            String expectedText = expectedTexts.get(i);
-
-            if (!expectedRgba.equals(actual.rgba()) || !Html.text.equals(actual.text(), expectedText)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private CheckResult createMismatchResult(List<SimpleBubble> actualBubbles) {
+    protected CheckResult createMismatchResult(List<SimpleBubble> actualBubbles) {
         StringBuilder stringBuilder = new StringBuilder("List bubbles mismatch [\n");
 
         for (int i = 0; i < actualBubbles.size(); i++) {
@@ -112,4 +81,8 @@ public class BubblesCondition extends WebElementsCondition {
         return Arrays.toString(expectedBubbles);
     }
 
+    @Override
+    public String errorMessage() {
+        return "Bubbles check failed";
+    }
 }

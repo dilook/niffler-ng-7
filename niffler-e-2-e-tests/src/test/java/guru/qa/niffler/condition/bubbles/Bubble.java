@@ -1,4 +1,4 @@
-package guru.qa.niffler.condition;
+package guru.qa.niffler.condition.bubbles;
 
 import org.jetbrains.annotations.NotNull;
 

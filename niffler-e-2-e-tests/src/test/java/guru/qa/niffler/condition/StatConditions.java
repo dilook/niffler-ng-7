@@ -4,6 +4,11 @@ import com.codeborne.selenide.CheckResult;
 import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.WebElementCondition;
 import com.codeborne.selenide.WebElementsCondition;
+import guru.qa.niffler.condition.bubbles.Bubble;
+import guru.qa.niffler.condition.bubbles.BubblesCondition;
+import guru.qa.niffler.condition.bubbles.BubblesContainsCondition;
+import guru.qa.niffler.condition.bubbles.BubblesInAnyOrderCondition;
+import guru.qa.niffler.condition.bubbles.Color;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebElement;
 
@@ -39,6 +44,11 @@ public class StatConditions {
     @Nonnull
     public static WebElementsCondition bubblesInAnyOrder(@Nonnull Bubble... expectedBubbles) {
         return new BubblesInAnyOrderCondition(expectedBubbles);
+    }
+
+    @Nonnull
+    public static WebElementsCondition bubblesContains(@Nonnull Bubble... expectedBubbles) {
+        return new BubblesContainsCondition(expectedBubbles);
     }
 
 }

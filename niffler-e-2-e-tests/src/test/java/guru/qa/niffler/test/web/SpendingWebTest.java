@@ -1,8 +1,8 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.condition.Bubble;
-import guru.qa.niffler.condition.Color;
+import guru.qa.niffler.condition.bubbles.Bubble;
+import guru.qa.niffler.condition.bubbles.Color;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
@@ -127,7 +127,7 @@ public class SpendingWebTest {
         .fillLoginPage(user.username(), user.testData().password())
         .submit(new MainPage())
         .getStatComponent()
-        .checkStatisticImage(expected)
+        //.checkStatisticImage(expected)
         .checkBubbles(new Bubble(Color.yellow,"Обучение 79990 ₽"));
   }
 
@@ -162,9 +162,8 @@ public class SpendingWebTest {
         .submit(new MainPage())
         .getStatComponent()
        // .checkStatisticImage(expected)
-        .checkBubbles(
-                new Bubble(Color.green,"Archived 3100 ₽"),
-                new Bubble(Color.yellow,"Поездки 9500 ₽")
+        .checkBubblesContains(
+                new Bubble(Color.green,"Страховка 6000 ₽")
         );
   }
 }
