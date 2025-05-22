@@ -4,12 +4,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
+import java.util.logging.SimpleFormatter;
 
 @ParametersAreNonnullByDefault
 public record SpendJson(
@@ -48,4 +52,13 @@ public record SpendJson(
         username
     );
   }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return "{category=" + category.name() +
+                ", amount=" + amount + " " + currency.getSymbol() +
+                ", description=" + description +
+                ", date=" + new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).format(spendDate) + "}";
+    }
 }
