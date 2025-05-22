@@ -10,6 +10,8 @@ import io.qameta.allure.Step;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import java.util.List;
+
 import static com.codeborne.selenide.ClickOptions.usingJavaScript;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
@@ -84,8 +86,8 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
 
   @Step("Check that table contains spends '{0}'")
   @Nonnull
-  public SpendingTable checkTableContains(SpendJson... expectedSpend) {
-    tableRows.shouldHave(spends(expectedSpend));
+  public SpendingTable checkTableContains(List<SpendJson> expectedSpend) {
+    tableRows.shouldHave(spends(expectedSpend.toArray(new SpendJson[0])));
     return this;
   }
 
