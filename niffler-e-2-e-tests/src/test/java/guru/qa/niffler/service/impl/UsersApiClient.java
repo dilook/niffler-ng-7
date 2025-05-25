@@ -5,6 +5,7 @@ import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.api.core.RestClient.EmtyRestClient;
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.model.FriendshipStatus;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.UsersClient;
@@ -12,8 +13,11 @@ import io.qameta.allure.Step;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Response;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
@@ -130,6 +134,48 @@ public class UsersApiClient implements UsersClient {
             .friends()
             .add(response.body());
       }
+    }
+  }
+
+  @Step("Get all income invitations for username '{0}' using REST API")
+  @Nonnull
+  public List<UserJson> getAllIncomeInvitations(String username) {
+    try {
+      Response<List<UserJson>> response = userdataApi.friends(username, null).execute();
+      if (response.isSuccessful() && response.body() != null) {
+        return response.body().stream().filter(user -> user.friendshipStatus() == FriendshipStatus.INVITE_RECEIVED).toList();
+      }
+      return Collections.emptyList();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to get all users", e);
+    }
+  }
+
+  @Step("Get all income invitations for username '{0}' using REST API")
+  @Nonnull
+  public List<UserJson> getAllOutcomeInvitations(String username) {
+    try {
+      Response<List<UserJson>> response = userdataApi.allUsers(username, null).execute();
+      if (response.isSuccessful() && response.body() != null) {
+        return response.body().stream().filter(user -> user.friendshipStatus() == FriendshipStatus.INVITE_SENT).toList();
+      }
+      return Collections.emptyList();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to get all users", e);
+    }
+  }
+
+  @Step("Get all friends for username '{0}' using REST API")
+  @Nonnull
+  public List<UserJson> getFriends(String username) {
+    try {
+      Response<List<UserJson>> response = userdataApi.friends(username, null).execute();
+      if (response.isSuccessful() && response.body() != null) {
+        return response.body().stream().filter(user -> user.friendshipStatus() == FriendshipStatus.FRIEND).toList();
+      }
+      return Collections.emptyList();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to get all friends", e);
     }
   }
 }

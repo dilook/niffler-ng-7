@@ -14,12 +14,15 @@ import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
+import org.apache.commons.lang.NotImplementedException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.List;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
@@ -150,7 +153,25 @@ public class UsersDbClient implements UsersClient {
     }
   }
 
-  @Nonnull
+    @NotNull
+    @Override
+    public List<UserJson> getAllIncomeInvitations(String username) {
+        throw new NotImplementedException();
+    }
+
+    @NotNull
+    @Override
+    public List<UserJson> getFriends(String username) {
+        throw new NotImplementedException();
+    }
+
+    @NotNull
+    @Override
+    public List<UserJson> getAllOutcomeInvitations(String username) {
+        throw new NotImplementedException();
+    }
+
+    @Nonnull
   private UserEntity createNewUser(String username, String password) {
     AuthUserEntity authUser = authUserEntity(username, password);
     authUserRepository.create(authUser);

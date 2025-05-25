@@ -7,13 +7,13 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Token;
 import guru.qa.niffler.model.TestData;
-import guru.qa.niffler.model.rest.CategoryJson;
-import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.service.SpendClient;
+import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.impl.AuthApiClient;
 import guru.qa.niffler.service.impl.SpendApiClient;
+import guru.qa.niffler.service.impl.UsersApiClient;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -23,8 +23,6 @@ import org.junit.platform.commons.support.AnnotationSupport;
 import org.openqa.selenium.Cookie;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.ArrayList;
-import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver {
@@ -34,6 +32,7 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
 
   private final AuthApiClient authApiClient = new AuthApiClient();
   private final SpendClient spendApiClient = new SpendApiClient();
+  private final UsersClient userApiClient = new UsersApiClient();
   private final boolean setupBrowser;
 
   private ApiLoginExtension(boolean setupBrowser) {
@@ -61,17 +60,15 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
             }
             userToLogin = userFromUserExtension;
           } else {
-            List<SpendJson> spends = spendApiClient.getAllSpendsOf(apiLogin.username());
-            List<CategoryJson> categories = spendApiClient.getAllCategories(apiLogin.username());
             UserJson fakeUser = new UserJson(
                 apiLogin.username(),
                 new TestData(
                     apiLogin.password(),
-                        categories,
-                        spends,
-                        new ArrayList<>(),
-                        new ArrayList<>(),
-                        new ArrayList<>()
+                    spendApiClient.getAllCategories(apiLogin.username()),
+                    spendApiClient.getAllSpendsOf(apiLogin.username()),
+                    userApiClient.getFriends(apiLogin.username()),
+                    userApiClient.getAllOutcomeInvitations(apiLogin.username()),
+                    userApiClient.getAllIncomeInvitations(apiLogin.username())
                 )
             );
             if (userFromUserExtension != null) {
