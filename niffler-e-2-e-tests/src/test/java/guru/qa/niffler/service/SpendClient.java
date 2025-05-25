@@ -7,14 +7,15 @@ import guru.qa.niffler.service.impl.SpendDbClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @ParametersAreNonnullByDefault
 public interface SpendClient {
 
   static SpendClient getInstance() {
     return "api".equals(System.getProperty("client.impl"))
-        ? new SpendApiClient()
-        : new SpendDbClient();
+            ? new SpendApiClient()
+            : new SpendDbClient();
   }
 
   @Nonnull
@@ -27,4 +28,8 @@ public interface SpendClient {
   CategoryJson updateCategory(CategoryJson category);
 
   void removeCategory(CategoryJson category);
+
+  @Nonnull
+  List<SpendJson> getAllSpendsOf(String username);
+
 }

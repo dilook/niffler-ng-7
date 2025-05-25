@@ -10,10 +10,13 @@ import guru.qa.niffler.model.rest.CategoryJson;
 import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
+import org.apache.commons.lang.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
@@ -85,4 +88,10 @@ public class SpendDbClient implements SpendClient {
         }
     );
   }
+
+    @NotNull
+    @Override
+    public List<SpendJson> getAllSpendsOf(String username) {
+        throw new NotImplementedException();
+    }
 }
