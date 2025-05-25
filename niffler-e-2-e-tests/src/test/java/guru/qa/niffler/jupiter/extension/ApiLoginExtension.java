@@ -7,6 +7,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Token;
 import guru.qa.niffler.model.TestData;
+import guru.qa.niffler.model.rest.CategoryJson;
 import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.MainPage;
@@ -61,11 +62,12 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
             userToLogin = userFromUserExtension;
           } else {
             List<SpendJson> spends = spendApiClient.getAllSpendsOf(apiLogin.username());
+            List<CategoryJson> categories = spendApiClient.getAllCategories(apiLogin.username());
             UserJson fakeUser = new UserJson(
                 apiLogin.username(),
                 new TestData(
                     apiLogin.password(),
-                        new ArrayList<>(),
+                        categories,
                         spends,
                         new ArrayList<>(),
                         new ArrayList<>(),

@@ -103,4 +103,19 @@ public class SpendApiClient extends RestClient implements SpendClient {
   public void removeCategory(CategoryJson category) {
     throw new UnsupportedOperationException("Can`t remove category using API");
   }
+
+  @Override
+  @Step("Get all categories by username using REST API")
+  @Nonnull
+  public List<CategoryJson> getAllCategories(String username) {
+    final Response<List<CategoryJson>> response;
+    try {
+      response = spendApi.allCategories(username)
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return requireNonNull(response.body());
+  }
 }

@@ -94,4 +94,10 @@ public class SpendDbClient implements SpendClient {
     public List<SpendJson> getAllSpendsOf(String username) {
         throw new NotImplementedException();
     }
+
+    @NotNull
+    @Override
+    public List<CategoryJson> getAllCategories(String username) {
+        throw new NotImplementedException();
+    }
 }

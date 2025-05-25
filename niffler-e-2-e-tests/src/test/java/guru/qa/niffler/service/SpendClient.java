@@ -32,4 +32,7 @@ public interface SpendClient {
   @Nonnull
   List<SpendJson> getAllSpendsOf(String username);
 
+  @Nonnull
+  List<CategoryJson> getAllCategories(String username);
+
 }
