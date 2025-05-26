@@ -43,6 +43,21 @@ public class GatewayApiClient extends RestClient {
     return requireNonNull(response.body());
   }
 
+  @Step("Send GET request /api/users/all to niffler-gateway")
+  @Nonnull
+  public List<UserJson> allUsers(String bearerToken,
+                                   @Nullable String searchQuery) {
+    final Response<List<UserJson>> response;
+    try {
+      response = gatewayApi.allUsers(bearerToken, searchQuery)
+          .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return requireNonNull(response.body());
+  }
+
   @Step("Send DELETE request /api/friends to niffler-gateway")
   public void removeFriend(String bearerToken, String targetUsername) {
     final Response<Void> response;
@@ -68,5 +83,35 @@ public class GatewayApiClient extends RestClient {
     assertEquals(200, response.code());
     return requireNonNull(response.body());
   }
+
+  @Step("Send POST request /api/invitations/decline to niffler-gateway")
+  @Nonnull
+  public UserJson declineInvitation(String bearerToken, String username) {
+    final Response<UserJson> response;
+    try {
+      response = gatewayApi.declineInvitation(bearerToken, new FriendJson(username))
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return requireNonNull(response.body());
+  }
+
+  @Step("Send POST request /api/invitations/send to niffler-gateway")
+  @Nonnull
+  public UserJson sendInvitation(String bearerToken, String username) {
+    final Response<UserJson> response;
+    try {
+      response = gatewayApi.sendInvitation(bearerToken, new FriendJson(username))
+              .execute();
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
+    assertEquals(200, response.code());
+    return requireNonNull(response.body());
+  }
+
+
 
 }

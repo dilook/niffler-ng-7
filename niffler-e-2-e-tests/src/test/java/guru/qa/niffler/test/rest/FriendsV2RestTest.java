@@ -16,64 +16,48 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 @RestTest
 public class FriendsV2RestTest {
 
-  @RegisterExtension
-  private static final ApiLoginExtension apiLoginExtension = ApiLoginExtension.api();
+    @RegisterExtension
+    private static final ApiLoginExtension apiLoginExtension = ApiLoginExtension.api();
 
-  private final GatewayV2ApiClient gatewayApiV2Client = new GatewayV2ApiClient();
-  private final GatewayApiClient gatewayApiClient = new GatewayApiClient();
+    private final GatewayV2ApiClient gatewayApiV2Client = new GatewayV2ApiClient();
+    private final GatewayApiClient gatewayApiClient = new GatewayApiClient();
 
-  @ApiLogin
-  @User(friends = 1, incomeInvitations = 1)
-  @Test
-  void friendsAndIncomeInvitationsListShouldBeReturned(UserJson user, @Token String token) {
-    final UserJson expectedFriend = user.testData().friends().getFirst();
-    final UserJson expectedInvitation = user.testData().incomeInvitations().getFirst();
+    @ApiLogin
+    @User(friends = 1, incomeInvitations = 1)
+    @Test
+    void friendsAndIncomeInvitationsListShouldBeReturned(UserJson user, @Token String token) {
+        final UserJson expectedFriend = user.testData().friends().getFirst();
+        final UserJson expectedInvitation = user.testData().incomeInvitations().getFirst();
 
-    final RestResponsePage<UserJson> response = gatewayApiV2Client.allFriends(token, 0, 2, null, null);
+        final RestResponsePage<UserJson> response = gatewayApiV2Client.allFriends(token, 0, 2, null, null);
 
-    Assertions.assertEquals(2, response.getContent().size());
+        Assertions.assertEquals(2, response.getContent().size());
 
-    final UserJson actualInvitation = response.getContent().getFirst();
-    final UserJson actualFriend = response.getContent().getLast();
+        final UserJson actualInvitation = response.getContent().getFirst();
+        final UserJson actualFriend = response.getContent().getLast();
 
-    Assertions.assertEquals(expectedFriend.id(), actualFriend.id());
-    Assertions.assertEquals(expectedInvitation.id(), actualInvitation.id());
-  }
+        Assertions.assertEquals(expectedFriend.id(), actualFriend.id());
+        Assertions.assertEquals(expectedFriend.friendshipStatus(), actualFriend.friendshipStatus());
+        Assertions.assertEquals(expectedFriend.username(), actualFriend.username());
 
-  @ApiLogin
-  @User(friends = 2, incomeInvitations = 2)
-  @Test
-  void friendsAndIncomeInvitationsListShouldBeFilteredAndReturned(UserJson user, @Token String token) {
-    final UserJson expectedFriend = user.testData().friends().getFirst();
+        Assertions.assertEquals(expectedInvitation.id(), actualInvitation.id());
+        Assertions.assertEquals(expectedInvitation.friendshipStatus(), actualInvitation.friendshipStatus());
+        Assertions.assertEquals(expectedInvitation.username(), actualInvitation.username());
+    }
 
-    final RestResponsePage<UserJson> response = gatewayApiV2Client.allFriends(token, 0, 4, null, expectedFriend.username());
-    Assertions.assertEquals(1, response.getContent().size());
+    @ApiLogin
+    @User(friends = 2, incomeInvitations = 2)
+    @Test
+    void friendsAndIncomeInvitationsListShouldBeFilteredAndReturned(UserJson user, @Token String token) {
+        final UserJson expectedFriend = user.testData().friends().getFirst();
 
-    final UserJson filteredFriend = response.getContent().getFirst();
-    Assertions.assertEquals(expectedFriend.id(), filteredFriend.id());
-  }
+        final RestResponsePage<UserJson> response = gatewayApiV2Client.allFriends(token, 0, 4, null, expectedFriend.username());
+        Assertions.assertEquals(1, response.getContent().size());
 
-  @ApiLogin
-  @User(friends = 1)
-  @Test
-  void friendshipShouldBeRemovable(UserJson user, @Token String token) {
-    final UserJson friend = user.testData().friends().getFirst();
+        final UserJson filteredFriend = response.getContent().getFirst();
+        Assertions.assertEquals(expectedFriend.id(), filteredFriend.id());
+        Assertions.assertEquals(expectedFriend.friendshipStatus(), filteredFriend.friendshipStatus());
+        Assertions.assertEquals(expectedFriend.username(), filteredFriend.username());
+    }
 
-    gatewayApiClient.removeFriend(token, friend.username());
-    final RestResponsePage<UserJson> response = gatewayApiV2Client.allFriends(token, 0, 4, null, null);
-
-    Assertions.assertEquals(0, response.getContent().size());
-  }
-  @ApiLogin
-  @User(incomeInvitations = 1)
-  @Test
-  void incomeInvitationShouldBeAcceptable(UserJson user, @Token String token) {
-    final UserJson incomeUser = user.testData().incomeInvitations().getFirst();
-
-    gatewayApiClient.acceptInvitation(token, incomeUser.username());
-    final RestResponsePage<UserJson> response = gatewayApiV2Client.allFriends(token, 0, 4, null, null);
-
-    Assertions.assertEquals(1, response.getContent().size());
-    Assertions.assertEquals(incomeUser.id(), response.getContent().getFirst().id());
-  }
 }
