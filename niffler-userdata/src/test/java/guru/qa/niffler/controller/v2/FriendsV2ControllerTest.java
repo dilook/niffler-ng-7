@@ -1,4 +1,4 @@
-package guru.qa.niffler.controller;
+package guru.qa.niffler.controller.v2;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
