@@ -23,7 +23,7 @@ public class StatGraphQlTest extends BaseGraphQlTest {
     @User
     @Test
     @ApiLogin
-    void emptyStatTest(@Token String bearerToken) {
+    void shouldReturnEmptyStat(@Token String bearerToken) {
         final ApolloCall<StatQuery.Data> currenciesCall = apolloClient.query(StatQuery.builder()
                         .filterCurrency(null)
                         .statCurrency(null)
@@ -53,7 +53,7 @@ public class StatGraphQlTest extends BaseGraphQlTest {
     )
     @Test
     @ApiLogin
-    void statWithArchivedCategoryTest(@Token String bearerToken) {
+    void shouldIncludeArchivedCategoryInStat(@Token String bearerToken) {
         final ApolloCall<StatQuery.Data> currenciesCall = apolloClient.query(StatQuery.builder()
                         .filterCurrency(null)
                         .statCurrency(null)
@@ -98,7 +98,7 @@ public class StatGraphQlTest extends BaseGraphQlTest {
     )
     @Test
     @ApiLogin
-    void statWithDifferentCurrenciesTest(@Token String bearerToken) {
+    void shouldHandleDifferentCurrenciesInStat(@Token String bearerToken) {
         final ApolloCall<StatQuery.Data> currenciesCall = apolloClient.query(StatQuery.builder()
                         .filterCurrency(null)
                         .statCurrency(null)
@@ -143,7 +143,7 @@ public class StatGraphQlTest extends BaseGraphQlTest {
     )
     @Test
     @ApiLogin
-    void filteredStatByCurrencyTest(@Token String bearerToken) {
+    void shouldFilterAndViewStatByCurrency(@Token String bearerToken) {
         final ApolloCall<StatQuery.Data> onlyTengeStat = apolloClient.query(StatQuery.builder()
                         .filterCurrency(guru.qa.type.CurrencyValues.KZT)
                         .statCurrency(guru.qa.type.CurrencyValues.KZT)
@@ -157,6 +157,36 @@ public class StatGraphQlTest extends BaseGraphQlTest {
 
         Assertions.assertEquals(1_000.0, result.total);
         Assertions.assertEquals("KZT", result.currency.rawValue);
+        Assertions.assertEquals(1, result.statByCategories.size());
+        Assertions.assertEquals("Еда", result.statByCategories.getFirst().categoryName);
+    }
+
+    @User(
+            categories = {
+                    @Category(name = "Машина"),
+                    @Category(name = "Еда")
+            },
+            spendings = {
+                    @Spending(category = "Машина", description = "ТО-0", amount = 5_000.0),
+                    @Spending(category = "Еда", description = "Кумыс", amount = 1_000.0, currency = CurrencyValues.KZT)
+            }
+    )
+    @Test
+    @ApiLogin
+    void shouldShowStatFilteredByCurrencyInDefaultCurrency(@Token String bearerToken) {
+        final ApolloCall<StatQuery.Data> onlyTengeStat = apolloClient.query(StatQuery.builder()
+                        .filterCurrency(guru.qa.type.CurrencyValues.KZT)
+                        .statCurrency(null)
+                        .filterPeriod(null)
+                        .build())
+                .addHttpHeader("authorization", bearerToken);
+
+        final ApolloResponse<StatQuery.Data> response = Rx2Apollo.single(onlyTengeStat).blockingGet();
+        final StatQuery.Data data = response.dataOrThrow();
+        StatQuery.Stat result = data.stat;
+
+        Assertions.assertEquals(140.0, result.total);
+        Assertions.assertEquals("RUB", result.currency.rawValue);
         Assertions.assertEquals(1, result.statByCategories.size());
         Assertions.assertEquals("Еда", result.statByCategories.getFirst().categoryName);
     }
