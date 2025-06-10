@@ -26,19 +26,19 @@ public class CurrenciesGraphQlTest extends BaseGraphQlTest {
     final CurrenciesQuery.Data data = response.dataOrThrow();
     final List<CurrenciesQuery.Currency> all = data.currencies;
     Assertions.assertEquals(
-        CurrencyValues.EUR.name(),
+        CurrencyValues.RUB.name(),
         all.get(0).currency.rawValue
     );
     Assertions.assertEquals(
-        CurrencyValues.USD.name(),
+        CurrencyValues.KZT.name(),
         all.get(1).currency.rawValue
     );
     Assertions.assertEquals(
-        CurrencyValues.KZT.name(),
+        CurrencyValues.EUR.name(),
         all.get(2).currency.rawValue
     );
     Assertions.assertEquals(
-        CurrencyValues.RUB.name(),
+        CurrencyValues.USD.name(),
         all.get(3).currency.rawValue
     );
   }
