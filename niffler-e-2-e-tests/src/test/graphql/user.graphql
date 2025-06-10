@@ -30,7 +30,7 @@ query UserWithFriendsCategories($page:Int!, $size:Int!, $sort: [String!], $searc
     }
 }
 
-query UserWithUsersDepthThree($page:Int!, $size:Int!, $sort: [String!], $searchQuery:String) {
+query UserWithUsersDepthOne($page:Int!, $size:Int!, $sort: [String!], $searchQuery:String) {
     user {
         friends(page: $page, size: $size, sort: $sort, searchQuery: $searchQuery) {
             edges {
@@ -38,13 +38,7 @@ query UserWithUsersDepthThree($page:Int!, $size:Int!, $sort: [String!], $searchQ
                     friends(page: $page, size: $size, sort: $sort, searchQuery: $searchQuery) {
                         edges {
                             node {
-                                friends(page: $page, size: $size, sort: $sort, searchQuery: $searchQuery) {
-                                    edges {
-                                        node {
-                                            username
-                                        }
-                                    }
-                                }
+                                username
                             }
                         }
                     }
