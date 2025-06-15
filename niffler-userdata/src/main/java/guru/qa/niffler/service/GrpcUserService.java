@@ -11,57 +11,69 @@ import guru.qa.niffler.grpc.NifflerUserDataServiceGrpc;
 import guru.qa.niffler.grpc.UserNameRequest;
 import guru.qa.niffler.grpc.UserRequest;
 import guru.qa.niffler.grpc.UserResponse;
+import guru.qa.niffler.model.UserJson;
+import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 
+@GrpcService
 public class GrpcUserService extends NifflerUserDataServiceGrpc.NifflerUserDataServiceImplBase {
-    @Override
-    public void getCurrentUser(UserNameRequest request, io.grpc.stub.StreamObserver<UserResponse> responseObserver) {
-        super.getCurrentUser(request, responseObserver);
+
+
+    private final UserService userService;
+
+    public GrpcUserService(UserService userRepository) {
+        this.userService = userRepository;
     }
 
     @Override
-    public void getAllUsers(AllUsersRequest request, io.grpc.stub.StreamObserver<AllUsersResponse> responseObserver) {
+    public void getCurrentUser(UserNameRequest request, StreamObserver<UserResponse> responseObserver) {
+        UserJson currentUser = userService.getCurrentUser(request.getUsername());
+        responseObserver.onNext(currentUser.toGrpcUserResponse());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAllUsers(AllUsersRequest request, StreamObserver<AllUsersResponse> responseObserver) {
         super.getAllUsers(request, responseObserver);
     }
 
     @Override
-    public void getAllUsersPaginated(AllUsersPaginatedRequest request,
-                                     io.grpc.stub.StreamObserver<AllUsersPaginatedResponse> responseObserver) {
+    public void getAllUsersPaginated(AllUsersPaginatedRequest request, StreamObserver<AllUsersPaginatedResponse> responseObserver) {
         super.getAllUsersPaginated(request, responseObserver);
     }
 
     @Override
-    public void updateUser(UserRequest request, io.grpc.stub.StreamObserver<UserResponse> responseObserver) {
+    public void updateUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
         super.updateUser(request, responseObserver);
     }
 
     @Override
-    public void getFriends(FriendsRequest request, io.grpc.stub.StreamObserver<AllUsersResponse> responseObserver) {
+    public void getFriends(FriendsRequest request, StreamObserver<AllUsersResponse> responseObserver) {
         super.getFriends(request, responseObserver);
     }
 
     @Override
-    public void getFriendsPaginated(FriendsPaginatedRequest request,
-                                    io.grpc.stub.StreamObserver<AllUsersPaginatedResponse> responseObserver) {
+    public void getFriendsPaginated(FriendsPaginatedRequest request, StreamObserver<AllUsersPaginatedResponse> responseObserver) {
         super.getFriendsPaginated(request, responseObserver);
     }
 
     @Override
-    public void removeFriend(FriendRequest request, io.grpc.stub.StreamObserver<com.google.protobuf.Empty> responseObserver) {
+    public void removeFriend(FriendRequest request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
         super.removeFriend(request, responseObserver);
     }
 
     @Override
-    public void sendInvitation(FriendRequest request, io.grpc.stub.StreamObserver<UserResponse> responseObserver) {
+    public void sendInvitation(FriendRequest request, StreamObserver<UserResponse> responseObserver) {
         super.sendInvitation(request, responseObserver);
     }
 
     @Override
-    public void acceptInvitation(FriendRequest request, io.grpc.stub.StreamObserver<UserResponse> responseObserver) {
+    public void acceptInvitation(FriendRequest request, StreamObserver<UserResponse> responseObserver) {
         super.acceptInvitation(request, responseObserver);
     }
 
     @Override
-    public void declineInvitation(FriendRequest request, io.grpc.stub.StreamObserver<UserResponse> responseObserver) {
+    public void declineInvitation(FriendRequest request, StreamObserver<UserResponse> responseObserver) {
         super.declineInvitation(request, responseObserver);
     }
 }
