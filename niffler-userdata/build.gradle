@@ -9,6 +9,9 @@ group = 'guru.qa'
 version = '2.0.2'
 
 dependencies {
+    implementation project(':niffler-grpc-common')
+    implementation "net.devh:grpc-server-spring-boot-starter:${project.ext.springGrpcVersion}"
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation('org.springframework.boot:spring-boot-starter-web-services') {
         exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
