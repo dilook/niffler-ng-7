@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.CurrencyValues;
 import guru.qa.niffler.data.projection.UserWithStatus;
+import guru.qa.niffler.grpc.UserResponse;
 import jakarta.annotation.Nonnull;
 import jaxb.userdata.Currency;
 import jaxb.userdata.User;
 
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+
+import static guru.qa.niffler.utils.GrpcStringUtil.safe;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record UserJsonBulk(
@@ -87,5 +90,21 @@ public record UserJsonBulk(
         projection.photoSmall() != null && projection.photoSmall().length > 0 ? new String(projection.photoSmall(), StandardCharsets.UTF_8) : null,
         projection.status() == guru.qa.niffler.data.FriendshipStatus.PENDING ? FriendshipStatus.INVITE_SENT : null
     );
+  }
+
+  public @Nonnull UserResponse toGrpcUserResponse() {
+    return UserResponse.newBuilder()
+            .setId(safe(id))
+            .setUsername(username)
+            .setFullname(safe(fullname))
+            .setCurrency(currency != null ?
+                    guru.qa.niffler.grpc.CurrencyValues.valueOf(currency.name()) :
+                    guru.qa.niffler.grpc.CurrencyValues.UNSPECIFIED
+            )
+            .setPhotoSmall(safe(photoSmall))
+            .setFriendshipStatus(friendshipStatus != null ?
+                    guru.qa.niffler.grpc.FriendshipStatus.valueOf(friendshipStatus.name()) :
+                    guru.qa.niffler.grpc.FriendshipStatus.UNSPECIFIED_STATUS
+            ).build();
   }
 }
