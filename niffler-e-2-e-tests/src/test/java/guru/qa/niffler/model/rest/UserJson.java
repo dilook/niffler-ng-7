@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.grpc.UserResponse;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.FriendshipStatus;
 import guru.qa.niffler.model.TestData;
@@ -12,6 +13,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+
+import static guru.qa.niffler.utils.GrpcStringUtil.safe;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record UserJson(
@@ -65,4 +68,23 @@ public record UserJson(
         id, username, firstname, surname, fullname, currency, photo, photoSmall, friendshipStatus, testData
     );
   }
+
+    public @Nonnull UserResponse toGrpcUserResponse() {
+        return guru.qa.niffler.grpc.UserResponse.newBuilder()
+                .setId(safe(id))
+                .setUsername(username)
+                .setFirstname(safe(firstname))
+                .setSurname(safe(surname))
+                .setFullname(safe(fullname))
+                .setCurrency(currency != null ?
+                        guru.qa.niffler.grpc.CurrencyValues.valueOf(currency.name()) :
+                        guru.qa.niffler.grpc.CurrencyValues.UNSPECIFIED
+                )
+                .setPhoto(safe(photo))
+                .setPhotoSmall(safe(photoSmall))
+                .setFriendshipStatus(friendshipStatus != null ?
+                        guru.qa.niffler.grpc.FriendshipStatus.valueOf(friendshipStatus.name()) :
+                        guru.qa.niffler.grpc.FriendshipStatus.UNSPECIFIED_STATUS
+                ).build();
+    }
 }

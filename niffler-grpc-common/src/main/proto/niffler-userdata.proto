@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "niffler-enum.proto";
+
+package guru.qa.grpc.niffler;
+
+option java_multiple_files = true;
+option java_package = "guru.qa.niffler.grpc";
+option java_outer_classname = "NifflerUserDataProto";
+
+service NifflerUserDataService {
+  // Users methods
+  rpc GetCurrentUser (UserNameRequest) returns (UserResponse) {}
+  rpc GetAllUsers (AllUsersRequest) returns (AllUsersResponse) {}
+  rpc GetAllUsersPaginated (AllUsersPaginatedRequest) returns (AllUsersPaginatedResponse) {}
+  rpc UpdateUser (UserRequest) returns (UserResponse) {}
+
+  // Friends methods
+  rpc GetFriends (FriendsRequest) returns (AllUsersResponse) {}
+  rpc GetFriendsPaginated (FriendsPaginatedRequest) returns (AllUsersPaginatedResponse) {}
+  rpc RemoveFriend (FriendRequest) returns (google.protobuf.Empty) {}
+
+  // Invitations methods
+  rpc SendInvitation (FriendRequest) returns (UserResponse) {}
+  rpc AcceptInvitation (FriendRequest) returns (UserResponse) {}
+  rpc DeclineInvitation (FriendRequest) returns (UserResponse) {}
+}
+
+message UserNameRequest {
+  string username = 1;
+}
+
+message UserRequest {
+  string id = 1;
+  string username = 2;
+  string firstname = 3;
+  string surname = 4;
+  string fullname = 5;
+  CurrencyValues currency = 6;
+  string photo = 7;
+  string photo_small = 8;
+  FriendshipStatus friendship_status = 9;
+}
+
+message UserResponse {
+  string id = 1;
+  string username = 2;
+  string firstname = 3;
+  string surname = 4;
+  string fullname = 5;
+  CurrencyValues currency = 6;
+  string photo = 7;
+  string photo_small = 8;
+  FriendshipStatus friendship_status = 9;
+}
+
+message AllUsersRequest {
+  string username = 1;
+  string search_query = 2;
+}
+
+message AllUsersResponse {
+  repeated UserResponse users = 1;
+}
+
+message AllUsersPaginatedRequest {
+  string username = 1;
+  string search_query = 2;
+  int32 page = 3;
+  int32 size = 4;
+}
+
+message AllUsersPaginatedResponse {
+  int64 total_elements = 1;
+  int32 total_pages = 2;
+  bool first = 3;
+  bool last = 4;
+  int32 size = 5;
+  repeated UserResponse edges = 6;
+}
+
+message FriendsRequest {
+  string username = 1;
+  string search_query = 2;
+}
+
+message FriendsPaginatedRequest {
+  string username = 1;
+  string search_query = 2;
+  int32 page = 3;
+  int32 size = 4;
+}
+
+message FriendRequest {
+  string username = 1;
+  string target_username = 2;
+}
+
+enum FriendshipStatus {
+  UNSPECIFIED_STATUS = 0;
+  INVITE_SENT = 1;
+  INVITE_RECEIVED = 2;
+  FRIEND = 3;
+}
