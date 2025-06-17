@@ -25,7 +25,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                 Currency.newBuilder().setCurrency(CurrencyValues.EUR).setCurrencyRate(1.08).build(),
                 Currency.newBuilder().setCurrency(CurrencyValues.USD).setCurrencyRate(1.0).build()
         );
-        final CurrencyResponse response = blockingStub.getAllCurrencies(Empty.getDefaultInstance());
+        final CurrencyResponse response = currencyBlockingStub.getAllCurrencies(Empty.getDefaultInstance());
         final List<Currency> allCurrenciesList = response.getAllCurrenciesList();
         Assertions.assertEquals(4, allCurrenciesList.size());
         Assertions.assertEquals(expectedCurrenciesList, allCurrenciesList);
@@ -47,7 +47,7 @@ public class CurrencyGrpcTest extends BaseGrpcTest {
                                         CurrencyValues spendCurrency,
                                         CurrencyValues desiredCurrency,
                                         double expectedResult) {
-        final CalculateResponse response = blockingStub.calculateRate(
+        final CalculateResponse response = currencyBlockingStub.calculateRate(
                 CalculateRequest.newBuilder()
                         .setSpendCurrency(spendCurrency)
                         .setAmount(spend)
