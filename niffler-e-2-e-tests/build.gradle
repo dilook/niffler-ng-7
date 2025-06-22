@@ -53,7 +53,7 @@ xjcGeneration {
     schemas {
         wsdlSchema {
             schemaFile = 'userdata.wsdl'
-            javaPackageName = 'guru.qa.jaxb.userdata'
+            javaPackageName = 'jaxb.userdata'
             sourceSet = 'test'
         }
     }
