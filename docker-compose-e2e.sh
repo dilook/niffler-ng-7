@@ -41,10 +41,5 @@ else
   echo "### All images exist except $E2E_IMAGE. No build needed ###"
 fi
 
-echo '### Java version ###'
-java --version
-bash ./gradlew clean
-bash ./gradlew jibDockerBuild -x :niffler-e-2-e-tests:test
-
 docker compose up -d
 docker ps -a
