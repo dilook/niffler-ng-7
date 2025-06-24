@@ -18,6 +18,12 @@ if [ ! -z "$docker_containers" ]; then
   docker rm $docker_containers
 fi
 
+if [ "$1" = "firefox" ]; then
+  echo "### Run on FIREFOX ###"
+  export BROWSER=firefox
+  docker pull selenoid/vnc_firefox:125.0
+fi
+
 images=("postgres" "zookeeper" "kafka" "niffler-auth-docker" "niffler-currency-docker" "niffler-gateway-docker"
  "niffler-spend-docker" "niffler-userdata-docker" "niffler-ng-client-docker" "selenoid" "selenoid-ui"
  "allure-docker-service" "allure-docker-service-ui")
