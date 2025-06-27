@@ -14,8 +14,8 @@ docker_containers=$(docker ps -a -q)
 
 if [ ! -z "$docker_containers" ]; then
   echo "### Stop containers: $docker_containers ###"
-  docker stop "$docker_containers"
-  docker rm "$docker_containers"
+  docker stop $docker_containers
+  docker rm $docker_containers
 fi
 
 if [ "$1" = "firefox" ]; then
