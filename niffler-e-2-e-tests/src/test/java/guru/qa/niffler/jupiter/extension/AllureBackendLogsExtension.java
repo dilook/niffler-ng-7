@@ -24,9 +24,15 @@ public class AllureBackendLogsExtension implements SuiteExtension {
       "niffler-userdata"
   );
 
+  private static final boolean isDocker = "docker".equals(System.getProperty("test.env"));
+
   @SneakyThrows
   @Override
   public void afterSuite() {
+    if(isDocker) {
+      return;
+    }
+
     final AllureLifecycle allureLifecycle = Allure.getLifecycle();
     final String caseId = UUID.randomUUID().toString();
     allureLifecycle.scheduleTestCase(new TestResult().setUuid(caseId).setName(caseName));

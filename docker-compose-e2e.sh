@@ -4,18 +4,18 @@ export PROFILE=docker
 export COMPOSE_PROFILES=test
 export PREFIX="${IMAGE_PREFIX}"
 export ALLURE_DOCKER_API=http://allure:5050/
-export HEAD_COMMIT_MESSAGE="local build"
+export HEAD_COMMIT_MESSAGE="local-build"
 export ARCH=$(uname -m)
+export EXECUTION_TYPE="local docker"
 
 docker compose down
 
 docker_containers=$(docker ps -a -q)
-docker_images=$(docker images --format '{{.Repository}}:{{.Tag}}' | grep 'niffler')
 
 if [ ! -z "$docker_containers" ]; then
   echo "### Stop containers: $docker_containers ###"
-  docker stop $docker_containers
-  docker rm $docker_containers
+  docker stop "$docker_containers"
+  docker rm "$docker_containers"
 fi
 
 if [ "$1" = "firefox" ]; then
