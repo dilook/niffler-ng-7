@@ -4,8 +4,10 @@ export PROFILE=docker
 export COMPOSE_PROFILES=test
 export PREFIX="${IMAGE_PREFIX}"
 export ALLURE_DOCKER_API=http://allure:5050/
-export HEAD_COMMIT_MESSAGE="local build"
+export HEAD_COMMIT_MESSAGE="local-build"
 export ARCH=$(uname -m)
+export EXECUTION_TYPE="local docker"
+#export BROWSER=chrome
 
 docker compose down
 
