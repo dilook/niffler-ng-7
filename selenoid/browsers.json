@@ -1,17 +1,24 @@
 {
   "chrome": {
-    "default": "127.0",
+    "default": "137.0",
     "versions": {
-      "125.0": {
-        "image": "selenoid/vnc_chrome:125.0",
+      "137.0": {
+        "image": "erolatex/selenoid_chromium:137.0",
         "port": "4444",
         "env": [
           "TZ=Europe/Moscow"
         ]
-      },
-      "127.0": {
-        "image": "selenoid/vnc_chrome:127.0",
+      }
+    }
+  },
+  "firefox": {
+    "default": "125.0",
+    "versions": {
+      "125.0": {
+        "image": "selenoid/vnc_firefox:125.0",
         "port": "4444",
+        "path": "/wd/hub",
+        "tmpfs": {"/tmp":"size=512m"},
         "env": [
           "TZ=Europe/Moscow"
         ]

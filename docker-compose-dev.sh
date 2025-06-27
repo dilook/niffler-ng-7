@@ -26,6 +26,8 @@ bash ./gradlew clean
 if [ "$1" = "push" ]; then
   echo "### Build & push images ###"
   bash ./gradlew jib -x :niffler-e-2-e-tests:test
+  echo "### Build & push FRONT ###"
+  docker compose build frontend.niffler.dc
   docker compose push frontend.niffler.dc
 else
   echo "### Build images ###"
